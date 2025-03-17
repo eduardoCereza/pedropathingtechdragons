@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.opencv.core.Mat;
-
 
 @TeleOp
 public class Modo_Teleoperado extends OpMode {
@@ -20,7 +18,7 @@ public class Modo_Teleoperado extends OpMode {
 
     //Importando componentes de inicializacao
     HardwareMap h;
-    DcMotor leftF, leftB, rightF, rightB;
+    DcMotor leftF, leftB, rightF, rightB, slide;
     IMU imu;
     @Override
     public void init(){
@@ -53,6 +51,10 @@ public class Modo_Teleoperado extends OpMode {
         leftF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        slide = h.get(DcMotor.class, "gobilda");
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         imu = h.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
@@ -92,5 +94,30 @@ public class Modo_Teleoperado extends OpMode {
         rightF.setPower(powerRF);
         leftB.setPower(powerLB);
         rightB.setPower(powerRB);
+    }
+
+    public void slide_Move(){
+        double j = gamepad2.left_stick_y;
+        int encoderDegreesToAttain = 200;
+        double minPower = 0.01;
+        double maxPower = 0.5;
+        PController pController = new PController(1);
+        pController.setInputRange(0,3600);
+        pController.setSetPoint(encoderDegreesToAttain);
+        pController.setOutputRange(minPower, maxPower);
+
+        int currentPosition = slide.getCurrentPosition();
+        double powerS = minPower + pController.getComputedOutput(currentPosition);
+        double powerD = minPower -pController.getComputedOutput(currentPosition);
+
+        if (j > 0) {
+            slide.setPower(powerS);
+        } else if (j < 0) {
+            slide.setPower(-powerS);
+
+        }else{
+            slide.setPower(powerD);
+        }
+
     }
 }
