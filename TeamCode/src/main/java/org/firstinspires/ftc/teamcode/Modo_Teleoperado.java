@@ -7,12 +7,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.opencv.core.Mat;
+
 
 @TeleOp
 public class Modo_Teleoperado extends OpMode {
 
     //Variáveis
-    double sen, cos, theta, power, max;
+    double sin, cos, theta, power, max;
+    double x, y, turn;
     double leftf,leftb, rightf, rightb;
 
     //Importando componentes de inicializacao
@@ -50,5 +53,37 @@ public class Modo_Teleoperado extends OpMode {
         rightB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         imu = h.get(IMU.class, "imu");
+    }
+
+    public void chassi_Move(){
+
+        y = gamepad1.left_stick_y;
+        x = -gamepad1.left_stick_x;
+        turn = -gamepad1.right_stick_x;
+
+        theta = Math.atan2(y, x);
+        power = Math.hypot(x, y);
+
+        sin = Math.sin(theta - Math.PI/4);
+        cos = Math.cos(theta - Math.PI/4);
+        max = Math.max(Math.abs(sin), Math.abs(cos));
+
+
+        double powerLF = power * cos/max + turn;
+        double powerLB = power * sin/max - turn;
+        double powerRF = power * sin/max + turn;
+        double powerRB = power * cos/max - turn;
+
+        if ((power + Math.abs(turn)) > 1){
+            powerLF /= power + turn;
+            powerLB /= power + turn;
+            powerRF /= power + turn;
+            powerRB /= power + turn;
+        }
+
+        leftF.setPower(powerLF);
+        rightF.setPower(powerRF);
+        leftB.setPower(powerLB);
+        rightB.setPower(powerRB);
     }
 }
