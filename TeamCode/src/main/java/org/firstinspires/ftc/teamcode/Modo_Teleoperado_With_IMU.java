@@ -8,15 +8,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+
 
 @TeleOp
 public class Modo_Teleoperado_With_IMU extends OpMode {
 
     //Variáveis
-    double sin, cos, theta, power, max;
     double x, y, turn;
-    double leftf,leftb, rightf, rightb;
-
     //Importando componentes de inicializacao
     HardwareMap h;
     DcMotor leftF, leftB, rightF, rightB;
@@ -30,7 +29,9 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
 
     public void loop(){
 
-        chassi_Move();
+        if (gamepad2.options){
+            imu.resetYaw();
+        }
 
     }
 
@@ -63,29 +64,23 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
 
     public void chassi_Move(){
 
+        double botHeading = imu.getRobotYawPitchRollAngles().getPitch(AngleUnit.RADIANS);
+
         y = gamepad1.left_stick_y;
         x = -gamepad1.left_stick_x;
         turn = -gamepad1.right_stick_x;
 
-        theta = Math.atan2(y, x);
-        power = Math.hypot(x, y);
+        double rotx = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double roty = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-        sin = Math.sin(theta - Math.PI/4);
-        cos = Math.cos(theta - Math.PI/4);
-        max = Math.max(Math.abs(sin), Math.abs(cos));
+        rotx = rotx * 1.1;
 
+        double denominator = Math.max(Math.abs(roty) + Math.abs(rotx) + Math.abs(turn), 1);
+        double powerLF = (roty + rotx + turn) / denominator;
+        double powerLB = (roty - rotx + turn) / denominator;
+        double powerRF = (roty - rotx - turn) / denominator;
+        double powerRB = (roty + rotx - turn) / denominator;
 
-        double powerLF = power * cos/max + turn;
-        double powerLB = power * sin/max - turn;
-        double powerRF = power * sin/max + turn;
-        double powerRB = power * cos/max - turn;
-
-        if ((power + Math.abs(turn)) > 1){
-            powerLF /= power + turn;
-            powerLB /= power + turn;
-            powerRF /= power + turn;
-            powerRB /= power + turn;
-        }
 
         leftF.setPower(powerLF);
         rightF.setPower(powerRF);

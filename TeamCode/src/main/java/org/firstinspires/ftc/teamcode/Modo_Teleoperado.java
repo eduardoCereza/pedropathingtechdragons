@@ -17,7 +17,6 @@ public class Modo_Teleoperado extends OpMode {
     //Variáveis
     double sin, cos, theta, power, max;
     double x, y, turn;
-    double leftf,leftb, rightf, rightb;
 
     //Importando componentes de inicializacao
     HardwareMap h;
