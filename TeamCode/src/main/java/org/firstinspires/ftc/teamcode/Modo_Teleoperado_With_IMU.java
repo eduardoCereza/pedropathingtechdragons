@@ -8,11 +8,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
-import org.opencv.core.Mat;
-
 
 @TeleOp
-public class Modo_Teleoperado extends OpMode {
+public class Modo_Teleoperado_With_IMU extends OpMode {
 
     //Variáveis
     double sin, cos, theta, power, max;
