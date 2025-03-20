@@ -28,9 +28,7 @@ public class Modo_Teleoperado extends OpMode {
     }
 
     public void loop(){
-
         chassi_Move();
-
     }
 
     public void initialization(){
