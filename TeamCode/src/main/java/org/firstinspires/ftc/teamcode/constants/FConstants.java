@@ -12,7 +12,7 @@ public class FConstants {
 
         FollowerConstants.leftFrontMotorName = "leftf";
         FollowerConstants.leftRearMotorName = "leftb";
-        FollowerConstants.rightFrontMotorName = "righf";
+        FollowerConstants.rightFrontMotorName = "rightf";
         FollowerConstants.rightRearMotorName = "rightb";
 
         FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
