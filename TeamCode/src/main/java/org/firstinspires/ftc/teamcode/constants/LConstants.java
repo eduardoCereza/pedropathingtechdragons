@@ -10,7 +10,7 @@ public class LConstants {
         DriveEncoderConstants.turnTicksToInches = 0.029148724516569278;
 
         DriveEncoderConstants.robot_Width = 16.9291;
-        DriveEncoderConstants.robot_Length = 1.9291;
+        DriveEncoderConstants.robot_Length = 16.9291;
 
         DriveEncoderConstants.leftFrontEncoderDirection = Encoder.REVERSE;
         DriveEncoderConstants.rightFrontEncoderDirection = Encoder.FORWARD;
