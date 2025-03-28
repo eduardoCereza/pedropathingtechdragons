@@ -6,8 +6,8 @@ import com.pedropathing.localization.constants.*;
 public class LConstants {
     static {
         DriveEncoderConstants.forwardTicksToInches = -0.0047;
-        DriveEncoderConstants.strafeTicksToInches = -0.0078;
-        DriveEncoderConstants.turnTicksToInches = -0.0129;
+        DriveEncoderConstants.strafeTicksToInches = -0.00626;
+        DriveEncoderConstants.turnTicksToInches = -0.0117;
 
         DriveEncoderConstants.robot_Width = 14.76378;
         DriveEncoderConstants.robot_Length = 14.76378;
