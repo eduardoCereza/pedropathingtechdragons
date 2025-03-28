@@ -5,12 +5,12 @@ import com.pedropathing.localization.constants.*;
 
 public class LConstants {
     static {
-        DriveEncoderConstants.forwardTicksToInches = 0.026069603537782912;
-        DriveEncoderConstants.strafeTicksToInches = 0.06609880031187991;
-        DriveEncoderConstants.turnTicksToInches = 0.029148724516569278;
+        DriveEncoderConstants.forwardTicksToInches = -0.0047;
+        DriveEncoderConstants.strafeTicksToInches = -0.0078;
+        DriveEncoderConstants.turnTicksToInches = -0.0129;
 
-        DriveEncoderConstants.robot_Width = 16.9291;
-        DriveEncoderConstants.robot_Length = 16.9291;
+        DriveEncoderConstants.robot_Width = 14.76378;
+        DriveEncoderConstants.robot_Length = 14.76378;
 
         DriveEncoderConstants.leftFrontEncoderDirection = Encoder.REVERSE;
         DriveEncoderConstants.rightFrontEncoderDirection = Encoder.FORWARD;
