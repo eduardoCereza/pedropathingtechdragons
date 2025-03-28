@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.constants;
 import com.pedropathing.localization.*;
 import com.pedropathing.follower.*;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
     static {
@@ -13,10 +14,10 @@ public class FConstants {
         FollowerConstants.rightFrontMotorName = "rightf";
         FollowerConstants.rightRearMotorName = "rightb";
 
-        FollowerConstants.leftFrontMotorDirection = DcMotorEx.Direction.REVERSE;
-        FollowerConstants.leftRearMotorDirection = DcMotorEx.Direction.REVERSE;
-        FollowerConstants.rightFrontMotorDirection = DcMotorEx.Direction.FORWARD;
-        FollowerConstants.rightRearMotorDirection = DcMotorEx.Direction.FORWARD;
+        FollowerConstants.leftFrontMotorDirection = DcMotorSimple.Direction.FORWARD;
+        FollowerConstants.leftRearMotorDirection = DcMotorSimple.Direction.FORWARD;
+        FollowerConstants.rightFrontMotorDirection = DcMotorSimple.Direction.REVERSE;
+        FollowerConstants.rightRearMotorDirection = DcMotorSimple.Direction.REVERSE;
 
         FollowerConstants.mass = 13;
 
