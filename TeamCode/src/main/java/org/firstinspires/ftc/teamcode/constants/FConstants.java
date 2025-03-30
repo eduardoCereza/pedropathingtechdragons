@@ -9,8 +9,6 @@ public class FConstants {
     static {
         FollowerConstants.localizers = Localizers.DRIVE_ENCODERS;
 
-
-
         FollowerConstants.leftFrontMotorName = "leftFront";
         FollowerConstants.leftRearMotorName = "leftRear";
         FollowerConstants.rightFrontMotorName = "rightFront";
@@ -26,9 +24,11 @@ public class FConstants {
         FollowerConstants.xMovement = 46.884119;
         FollowerConstants.yMovement = 53.717759;
 
+        //Revisar
         FollowerConstants.forwardZeroPowerAcceleration = -113.602785;
         FollowerConstants.lateralZeroPowerAcceleration = -553.2521953;
 
+        //Ajustar PIDs
         FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.01,0,0.0,0.1);
         FollowerConstants.useSecondaryTranslationalPID = true;
 
