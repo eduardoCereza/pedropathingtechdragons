@@ -25,7 +25,9 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
 
         initialization();
 
+
     }
+
 
     public void loop(){
 
@@ -96,38 +98,35 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
     }
 
     public void move_Slide(){
-        int limitSlide = 3400;
+        int limitSlide = 3100;
         double j = gamepad2.left_stick_y;
         double minPower = 0.01;
         double maxPower = 0.5;
-        PController pController = new PController(0.03);
+        PController pController = new PController(0.1);
         pController.setInputRange(50,3600);
         pController.setOutputRange(minPower, maxPower);
-        int currentPosition = slide.getCurrentPosition();
+        int currentPosition = -(slide.getCurrentPosition());
         double powerS = maxPower + pController.getComputedOutput(currentPosition);
-        double powerD = maxPower -pController.getComputedOutput(currentPosition);
+        double powerD = maxPower - pController.getComputedOutput(currentPosition);
 
-        if (currentPosition < limitSlide) {
+        if (currentPosition > limitSlide) {
             if (j > 0.1) {
                 slide.setPower(powerS);
-            } else if (j <0) {
+            } else if (j < 0) {
                 slide.setPower(-powerS);
             } else{
                 slide.setPower(powerD);
             }
-
-            if (currentPosition == 0){
-                if ( j > 0.1){
-                    slide.setPower(powerS);
-                }
-            }
         }else {
-            slide.setPower(0);
             if (j < 0) {
                 slide.setPower(-powerS);
             } else {
                 slide.setPower(powerD);
             }
         }
+
+        telemetry.addData("Pos:", currentPosition);
+        telemetry.update();
+
     }
 }
