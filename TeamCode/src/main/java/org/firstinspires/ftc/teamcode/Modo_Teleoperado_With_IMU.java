@@ -18,7 +18,7 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
     double x, y, turn;
     //Importando componentes de inicializacao
     HardwareMap h;
-    DcMotor leftF, leftB, rightF, rightB;
+    DcMotor leftF, leftB, rightF, rightB, slide;
     IMU imu;
     @Override
     public void init(){
@@ -32,14 +32,16 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
         if (gamepad2.options){
             imu.resetYaw();
         }
+        chassi_Move();
+        move_Slide();
 
     }
 
     public void initialization(){
-        leftF = h.get(DcMotor.class, "leftf");
-        leftB = h.get(DcMotor.class, "leftb");
-        rightF = h.get(DcMotor.class, "rightf");
-        rightB = h.get(DcMotor.class, "rightb");
+        leftF = hardwareMap.get(DcMotor.class, "leftf");
+        leftB = hardwareMap.get(DcMotor.class, "leftb");
+        rightF = hardwareMap.get(DcMotor.class, "rightf");
+        rightB = hardwareMap.get(DcMotor.class, "rightb");
 
         leftF.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -54,7 +56,12 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
         rightF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        imu = h.get(IMU.class, "imu");
+        slide = hardwareMap.get(DcMotor.class, "gobilda");
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.DOWN,
                 RevHubOrientationOnRobot.UsbFacingDirection.LEFT
@@ -86,5 +93,41 @@ public class Modo_Teleoperado_With_IMU extends OpMode {
         rightF.setPower(powerRF);
         leftB.setPower(powerLB);
         rightB.setPower(powerRB);
+    }
+
+    public void move_Slide(){
+        int limitSlide = 3400;
+        double j = gamepad2.left_stick_y;
+        double minPower = 0.01;
+        double maxPower = 0.5;
+        PController pController = new PController(0.03);
+        pController.setInputRange(50,3600);
+        pController.setOutputRange(minPower, maxPower);
+        int currentPosition = slide.getCurrentPosition();
+        double powerS = maxPower + pController.getComputedOutput(currentPosition);
+        double powerD = maxPower -pController.getComputedOutput(currentPosition);
+
+        if (currentPosition < limitSlide) {
+            if (j > 0.1) {
+                slide.setPower(powerS);
+            } else if (j <0) {
+                slide.setPower(-powerS);
+            } else{
+                slide.setPower(powerD);
+            }
+
+            if (currentPosition == 0){
+                if ( j > 0.1){
+                    slide.setPower(powerS);
+                }
+            }
+        }else {
+            slide.setPower(0);
+            if (j < 0) {
+                slide.setPower(-powerS);
+            } else {
+                slide.setPower(powerD);
+            }
+        }
     }
 }

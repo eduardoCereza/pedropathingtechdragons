@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.constants;
 
 import com.pedropathing.localization.*;
 import com.pedropathing.follower.*;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 public class FConstants {
