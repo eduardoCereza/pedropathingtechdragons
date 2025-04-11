@@ -83,7 +83,7 @@ public class TeleOp_Mundial extends OpMode {
             slide.setPower(minPower + pController.getComputedOutput(slide.getCurrentPosition()));
         }else if(gamepad2.left_stick_y < 0){
             slide.setPower(-(minPower + pController.getComputedOutput(slide.getCurrentPosition())));
-        }else{
+        }else if(gamepad2.left_stick_y == 0){
             slide.setPower(minPower - pController.getComputedOutput(slide.getCurrentPosition()));
         }
     }
