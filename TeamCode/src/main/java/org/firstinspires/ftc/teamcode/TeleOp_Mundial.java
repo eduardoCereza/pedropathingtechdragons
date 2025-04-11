@@ -72,7 +72,7 @@ public class TeleOp_Mundial extends OpMode {
     //TODO: Mover Slide
     public void moveSlide(){
         double minPower = 0.1;
-        double maxPower = 0.5;
+        double maxPower = 0.6;
 
         PController pController = new PController(1);
         pController.setSetPoint(slide.getCurrentPosition());
