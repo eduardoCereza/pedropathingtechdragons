@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Constants;
+import com.pedropathing.util.PIDFController;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -19,9 +24,13 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  * @version 2.0, 12/30/2024
  */
 
-
+@Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
 public class TeleOp_Mundial extends OpMode {
+
+    private PIDController controller;
+    public static double p = 0, i = 0, d = 0, f =0, target=-3200;
+    public final double ticks_in_degree = 700 / 180.0;
     private Follower follower;
     PController pController;
     DcMotorEx slide;
@@ -37,6 +46,10 @@ public class TeleOp_Mundial extends OpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        controller = new PIDController(p, i, d);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
     }
 
 
@@ -67,32 +80,17 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
-        double minPower =0.01;
-        double maxPower =0.5;
-        float j = gamepad2.left_stick_y;
-        int limitMax = -3200;
+        controller.setPID(p , i, d);
+        int armPos = slide.getCurrentPosition();
+        double pid = controller.calculate(armPos);
+        double ff = Math.cos(Math.toRadians(armPos / ticks_in_degree)) * f;
 
-        pController = new PController(1);
-        pController.setInputRange(50, limitMax);
-        pController.setOutputRange(minPower, maxPower);
+        double power = pid + ff;
 
-        double powerA = minPower + pController.getComputedOutput(slide.getCurrentPosition());
-        double powerB = minPower - pController.getComputedOutput(slide.getCurrentPosition());
-
-        if (slide.getCurrentPosition() < -3200){
-            if (j < 0) {
-                slide.setPower(-powerA);
-            } else if (j == 0) {
-                slide.setPower(powerB);
-            }
-        }else {
-            if (j > 0) {
-                slide.setPower(powerA);
-            } else if (j < 0) {
-                slide.setPower(-powerA);
-            } else if (j == 0) {
-                slide.setPower(powerB);
-            }
+        if (gamepad2.left_stick_y > 0) {
+            slide.setPower(power);
+        }else if (gamepad2.left_stick_y < 0){
+            slide.setPower(-power);
         }
     }
 
