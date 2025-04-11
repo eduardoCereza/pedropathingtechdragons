@@ -55,5 +55,18 @@ public class TeleOp_Mundial extends OpMode {
 
     }
 
-    
+    //TODO: Mover Slide
+    public void moveSlide(){
+
+    }
+
+    //TODO: Mover base do atuador
+    public void moveBase(){
+
+    }
+
+    //Todo: Mover servo
+    public void moveServo(){
+
+    }
 }
