@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class TeleOp_Mundial extends OpMode {
 
     private PIDController controller;
-    public static double p = 0, i = 0, d = 0, f =0, target=-3200;
+    public static double p = 1, i = 0, d = 0, f =1, target=-3200;
     public final double ticks_in_degree = 700 / 180.0;
     private Follower follower;
     PController pController;
