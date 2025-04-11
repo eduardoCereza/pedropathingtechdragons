@@ -34,7 +34,8 @@ public class TeleOp_Mundial extends OpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
@@ -74,7 +75,7 @@ public class TeleOp_Mundial extends OpMode {
     public void moveSlide(){
         double minPower =0.01;
         double maxPower =0.5;
-        float j = gamepad1.left_stick_y;
+        float j = gamepad2.left_stick_y;
         int limitMax = -3200;
 
         pController = new PController(1);
@@ -84,16 +85,20 @@ public class TeleOp_Mundial extends OpMode {
         double powerA = minPower + pController.getComputedOutput(slide.getCurrentPosition());
         double powerB = minPower - pController.getComputedOutput(slide.getCurrentPosition());
 
-        if (j > 0){
-            slide.setPower(powerA);
-        } else if (j < 0) {
-            slide.setPower(-powerA);
-        } else {
-            slide.setPower(powerB);
-        }
-
-        if (slide.getCurrentPosition() > limitMax){
-            slide.setPower(powerB);
+        if (slide.getCurrentPosition() < -3200){
+            if (j < 0) {
+                slide.setPower(-powerA);
+            } else if (j == 0) {
+                slide.setPower(powerB);
+            }
+        }else {
+            if (j > 0) {
+                slide.setPower(powerA);
+            } else if (j < 0) {
+                slide.setPower(-powerA);
+            } else if (j == 0) {
+                slide.setPower(powerB);
+            }
         }
     }
 
