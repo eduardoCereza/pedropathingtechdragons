@@ -27,6 +27,7 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
+    int encoderPoint;
     DcMotorEx slide;
     private final Pose startPose = new Pose(0,0,0);
 
@@ -75,16 +76,19 @@ public class TeleOp_Mundial extends OpMode {
         double maxPower = 0.6;
 
         PController pController = new PController(1);
-        pController.setSetPoint(slide.getCurrentPosition());
         pController.setInputRange(50, -3200);
+        pController.setSetPoint(encoderPoint);
         pController.setOutputRange(minPower, maxPower);
 
+        double powerEx = minPower + pController.getComputedOutput(slide.getCurrentPosition());
+        double powerRe = minPower - pController.getComputedOutput(slide.getCurrentPosition());
+
         if (gamepad2.left_stick_y > 0){
-            slide.setPower(minPower + pController.getComputedOutput(slide.getCurrentPosition()));
+            slide.setPower(powerEx);
         }else if(gamepad2.left_stick_y < 0){
-            slide.setPower(-(minPower + pController.getComputedOutput(slide.getCurrentPosition())));
+            slide.setPower(-powerEx);
         }else if(gamepad2.left_stick_y == 0){
-            slide.setPower(minPower - pController.getComputedOutput(slide.getCurrentPosition()));
+            slide.setPower(powerRe);
         }
     }
 
