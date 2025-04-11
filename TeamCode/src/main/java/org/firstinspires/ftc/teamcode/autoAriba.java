@@ -24,13 +24,13 @@ public class autoAriba extends OpMode {
 
     private final Pose startPose = new Pose(0, 71, Math.toRadians(0));
 
-    private final Pose Clip = new Pose(10, 71, Math.toRadians(0));
+    private final Pose ClipPose = new Pose(10, 71, Math.toRadians(0));
 
-    private final Pose posClip = new Pose(10, 10, Math.toRadians(0));
+    private final Pose move1 = new Pose(10, 30, Math.toRadians(0));
 
-    private final Pose specimen = new Pose(40, 10, Math.toRadians(0));
+    private final Pose move2 = new Pose(53, 30, Math.toRadians(0));
 
-    //private final Pose pickup3Pose = new Pose(49, 135, Math.toRadians(0));
+    private final Pose move3 = new Pose(53, 15, Math.toRadians(0));
 
     //private final Pose parkPose = new Pose(60, 98, Math.toRadians(90));
 
@@ -40,41 +40,43 @@ public class autoAriba extends OpMode {
     private PathChain clipada, grabPickup2, grabPickup3, aposClip, scorePickup2, scorePickup3;
     private PathChain traj1;
     public void buildPaths() {
-        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(Clip)));
+        scorePreload = new Path(new BezierLine(new Point(startPose), new Point(ClipPose)));
         scorePreload.setTangentHeadingInterpolation();
 
-        clipa = new Path(new BezierLine(new Point(Clip), new Point(posClip)));
+        clipa = new Path(new BezierLine(new Point(ClipPose), new Point(move1)));
         clipa.setConstantHeadingInterpolation(Math.toRadians(0));
 
         traj1 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(startPose), new Point(Clip)))
+                .addPath(new BezierLine(new Point(startPose), new Point(ClipPose)))
                 .setTangentHeadingInterpolation()
-                .addPath(new BezierLine(new Point(Clip), new Point(posClip)))
+                .addPath(new BezierLine(new Point(ClipPose), new Point(move1)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
-                .addPath(new BezierLine(new Point(posClip), new Point(specimen)))
+                .addPath(new BezierLine(new Point(move1), new Point(move2)))
                 .setTangentHeadingInterpolation()
+                .addPath(new BezierLine(new Point(move2), new Point(move3)))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
 
 
         clipada = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(Clip), new Point(posClip)))
+                .addPath(new BezierLine(new Point(ClipPose), new Point(move1)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         aposClip = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(posClip), new Point(specimen)))
+                .addPath(new BezierLine(new Point(move1), new Point(move2)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
         //grabPickup2 = follower.pathBuilder()
-                //.addPath(new BezierLine(new Point(Clip), new Point(specimen)))
-                //.setLinearHeadingInterpolation(Clip.getHeading(), specimen.getHeading())
+                //.addPath(new BezierLine(new Point(Clip), new Point(move2)))
+                //.setLinearHeadingInterpolation(Clip.getHeading(), move2.getHeading())
                 //.build();
 
         //scorePickup2 = follower.pathBuilder()
-                //.addPath(new BezierLine(new Point(specimen), new Point(Clip)))
-                //.setLinearHeadingInterpolation(specimen.getHeading(), Clip.getHeading())
+                //.addPath(new BezierLine(new Point(move2), new Point(Clip)))
+                //.setLinearHeadingInterpolation(move2.getHeading(), Clip.getHeading())
                 //.build();
 
         //grabPickup3 = follower.pathBuilder()
@@ -94,7 +96,7 @@ public class autoAriba extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(traj1);
+                follower.followPath(traj1, true);
                 setPathState(3);
                 break;
             case 1:
@@ -108,7 +110,7 @@ public class autoAriba extends OpMode {
             case 2:
                 if(!follower.isBusy()) {
 
-                    follower.followPath(aposClip);
+                    follower.followPath(aposClip, true);
                     setPathState(3);
                 }
                 break;
