@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Constants;
@@ -27,10 +26,6 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @Config
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
 public class TeleOp_Mundial extends OpMode {
-
-    private PIDController controller;
-    public static double p = 1, i = 0, d = 0, f =1, target=-3200;
-    public final double ticks_in_degree = 700 / 180.0;
     private Follower follower;
     PController pController;
     DcMotorEx slide;
@@ -46,9 +41,6 @@ public class TeleOp_Mundial extends OpMode {
         slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        controller = new PIDController(p, i, d);
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
     }
 
@@ -80,18 +72,7 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
-        controller.setPID(p , i, d);
-        int armPos = slide.getCurrentPosition();
-        double pid = controller.calculate(armPos);
-        double ff = Math.cos(Math.toRadians(armPos / ticks_in_degree)) * f;
 
-        double power = pid + ff;
-
-        if (gamepad2.left_stick_y > 0) {
-            slide.setPower(power);
-        }else if (gamepad2.left_stick_y < 0){
-            slide.setPower(-power);
-        }
     }
 
     //TODO: Mover base do atuador
