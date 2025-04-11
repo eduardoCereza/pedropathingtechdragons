@@ -27,7 +27,6 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
-    PController pController;
     DcMotorEx slide;
     private final Pose startPose = new Pose(0,0,0);
 
@@ -38,8 +37,8 @@ public class TeleOp_Mundial extends OpMode {
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
@@ -72,7 +71,21 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
+        double minPower = 0.1;
+        double maxPower = 0.5;
 
+        PController pController = new PController(1);
+        pController.setSetPoint(slide.getCurrentPosition());
+        pController.setInputRange(50, -3200);
+        pController.setOutputRange(minPower, maxPower);
+
+        if (gamepad2.left_stick_y > 0){
+            slide.setPower(minPower + pController.getComputedOutput(slide.getCurrentPosition()));
+        }else if(gamepad2.left_stick_y < 0){
+            slide.setPower(-(minPower + pController.getComputedOutput(slide.getCurrentPosition())));
+        }else{
+            slide.setPower(minPower - pController.getComputedOutput(slide.getCurrentPosition()));
+        }
     }
 
     //TODO: Mover base do atuador
