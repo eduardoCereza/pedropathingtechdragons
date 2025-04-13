@@ -11,6 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
@@ -27,8 +29,22 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
-    int encoderPoint;
     DcMotorEx slide;
+    double integralSum;
+    double Kp = 1;
+    double Ki = 0;
+    double Kd = 0;
+
+    double reference;
+    double lastReference = reference;
+    double a  = 0.8;
+    double lastError;
+
+    double maxIntegralSum = 0.5;
+    double previousFilterEstimate = 0;
+    double currentFilterEstimate = 0;
+    ElapsedTime timer = new ElapsedTime();
+
     private final Pose startPose = new Pose(0,0,0);
 
     /** This method is call once when init is played, it initializes the follower **/
@@ -38,8 +54,6 @@ public class TeleOp_Mundial extends OpMode {
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        slide.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
@@ -72,6 +86,40 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
+        int encoderPos = slide.getCurrentPosition();
+        double error = reference - encoderPos;
+        double errorChange = error - lastError;
+
+        currentFilterEstimate = (a * previousFilterEstimate) + (1-a) * errorChange;
+        previousFilterEstimate = currentFilterEstimate;
+
+        double derivative = currentFilterEstimate / timer.seconds();
+        integralSum = integralSum + (error * timer.seconds());
+
+        // max out integral sum
+        if (integralSum > maxIntegralSum) {
+            integralSum = maxIntegralSum;
+        }
+
+        if (integralSum < -maxIntegralSum) {
+            integralSum = -maxIntegralSum;
+        }
+
+        // reset integral sum upon setpoint changes
+        if (reference != lastReference) {
+            integralSum = 0;
+        }
+
+        double out = (Kp * error) + (Ki * integralSum) + (Kd * derivative);
+
+        slide.setPower(out);
+
+        lastError = error;
+
+        lastReference = reference;
+
+        // reset the timer for next time
+        timer.reset();
     }
 
     //TODO: Mover base do atuador
