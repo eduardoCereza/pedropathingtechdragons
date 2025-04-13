@@ -31,6 +31,8 @@ public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide;
 
+    PID_Parameters pid;
+
     private final Pose startPose = new Pose(0,0,0);
 
     /** This method is call once when init is played, it initializes the follower **/
@@ -41,6 +43,8 @@ public class TeleOp_Mundial extends OpMode {
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        pid = new PID_Parameters(1, 0, 0);
 
     }
 
@@ -72,6 +76,22 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
+
+        double input = gamepad2.left_stick_y;
+        int holdPos = 0;
+        int currentPos = slide.getCurrentPosition();
+
+        if (Math.abs(input) > 0.05){
+            slide.setPower(input);
+
+            holdPos = currentPos;
+            pid.reset();
+        }else {
+            double holdPower = pid.calculate(holdPos, currentPos);
+            slide.setPower(holdPower);
+        }
+
+
 
     }
 
