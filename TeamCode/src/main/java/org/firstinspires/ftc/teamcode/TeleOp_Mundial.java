@@ -35,7 +35,7 @@ public class TeleOp_Mundial extends OpMode {
     @Override
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -72,24 +72,6 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
-        double minPower = 0.1;
-        double maxPower = 0.6;
-
-        PController pController = new PController(1);
-        pController.setInputRange(50, -3200);
-        pController.setSetPoint(encoderPoint);
-        pController.setOutputRange(minPower, maxPower);
-
-        double powerEx = minPower + pController.getComputedOutput(slide.getCurrentPosition());
-        double powerRe = minPower - pController.getComputedOutput(slide.getCurrentPosition());
-
-        if (gamepad2.left_stick_y > 0){
-            slide.setPower(powerEx);
-        }else if(gamepad2.left_stick_y < 0){
-            slide.setPower(-powerEx);
-        }else if(gamepad2.left_stick_y == 0){
-            slide.setPower(powerRe);
-        }
     }
 
     //TODO: Mover base do atuador
