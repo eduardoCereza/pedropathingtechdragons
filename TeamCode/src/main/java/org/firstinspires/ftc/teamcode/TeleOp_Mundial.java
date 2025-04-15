@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  */
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial")
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide;
@@ -43,8 +43,6 @@ public class TeleOp_Mundial extends OpMode {
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        pid = new PID_Parameters(1, 0, 0);
 
     }
 
@@ -76,15 +74,15 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide(){
+        pid = new PID_Parameters(1, 0, 0);
 
         double input = gamepad2.left_stick_y;
-        int holdPos = 0;
+        int holdPos = -3600;
         int currentPos = slide.getCurrentPosition();
 
         if (Math.abs(input) > 0.05){
             slide.setPower(input);
 
-            holdPos = currentPos;
             pid.reset();
         }else {
             double holdPower = pid.calculate(holdPos, currentPos);
