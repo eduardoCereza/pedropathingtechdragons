@@ -134,7 +134,6 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase(){
-        /*
         int limit = 600;
         if(gamepad2.right_stick_y > 0){
             target += 100;
@@ -160,17 +159,7 @@ public class TeleOp_Mundial extends OpMode {
 
         }
 
-         */
-        if (gamepad2.right_stick_y > 0) {
-            armMotorL.setPower(1);
-            armMotorR.setPower(1);
-        } else if (gamepad2.right_stick_y < 0) {
-            armMotorL.setPower(-1);
-            armMotorR.setPower(-1);
-        } else {
-            armMotorL.setPower(0);
-            armMotorR.setPower(0);
-        }
+
     }
 
     //Todo: Mover servo
