@@ -12,7 +12,9 @@ import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
@@ -31,6 +33,11 @@ public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide;
 
+    Servo servo1, servo2;
+
+    boolean wasMoving = false;
+    int holdPos = 0;
+
     PID_Parameters pid;
 
     private final Pose startPose = new Pose(0,0,0);
@@ -39,10 +46,14 @@ public class TeleOp_Mundial extends OpMode {
     @Override
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower =  new Follower(hardwareMap);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
+
 
     }
 
@@ -61,6 +72,7 @@ public class TeleOp_Mundial extends OpMode {
         follower.update();
 
         moveSlide();
+        moveServo();
 
         /* Telemetry Outputs of our Follower */
         telemetry.addData("X", follower.getPose().getX());
@@ -77,20 +89,21 @@ public class TeleOp_Mundial extends OpMode {
         pid = new PID_Parameters(1, 0, 0);
 
         double input = gamepad2.left_stick_y;
-        int holdPos = -3600;
         int currentPos = slide.getCurrentPosition();
 
         if (Math.abs(input) > 0.05){
+            wasMoving = true;
             slide.setPower(input);
-
-            pid.reset();
         }else {
-            double holdPower = pid.calculate(holdPos, currentPos);
-            slide.setPower(holdPower);
+            if(wasMoving) {
+                holdPos = slide.getCurrentPosition();
+                wasMoving = false;
+                pid.reset();
+
+            }
+            double power = pid.calculate(holdPos, currentPos);
+            slide.setPower(power);
         }
-
-
-
     }
 
     //TODO: Mover base do atuador
@@ -101,5 +114,12 @@ public class TeleOp_Mundial extends OpMode {
     //Todo: Mover servo
     public void moveServo(){
 
+        if(gamepad2.right_bumper){
+            servo1.setPosition(1);
+            servo2.setPosition(1);
+        }else {
+            servo1.setPosition(0);
+            servo2.setPosition(0);
+        }
     }
 }
