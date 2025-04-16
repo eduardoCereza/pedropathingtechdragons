@@ -31,48 +31,60 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial")
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
-    DcMotorEx slide;
+    DcMotorEx slide, armMotorL, armMotorR;
 
-    Servo servo1, servo2;
+    Servo servo1, servo2, garra;
+    int target;
 
-    boolean wasMoving = false;
-    int holdPos = 0;
+    boolean holdingPosition = false;
 
-    PID_Parameters pid;
+    private final Pose startPose = new Pose(0, 0, 0);
 
-    private final Pose startPose = new Pose(0,0,0);
-
-    /** This method is call once when init is played, it initializes the follower **/
+    /**
+     * This method is call once when init is played, it initializes the follower
+     **/
     @Override
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
-        follower =  new Follower(hardwareMap);
+        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
+        garra = hardwareMap.get(Servo.class, "garra");
 
+        armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
+        armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
+        armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
 
-    /** This method is called once at the start of the OpMode. **/
+    /**
+     * This method is called once at the start of the OpMode.
+     **/
     @Override
     public void start() {
         follower.startTeleopDrive();
     }
 
-    /** This is the main loop of the opmode and runs continuously after play **/
+    /**
+     * This is the main loop of the opmode and runs continuously after play
+     **/
     @Override
     public void loop() {
 
         follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
         follower.update();
 
-        moveSlide();
         moveServo();
+        moveSlide();
+        armBase();
 
         /* Telemetry Outputs of our Follower */
         telemetry.addData("X", follower.getPose().getX());
@@ -85,41 +97,103 @@ public class TeleOp_Mundial extends OpMode {
     }
 
     //TODO: Mover Slide
-    public void moveSlide(){
-        pid = new PID_Parameters(1, 0, 0);
+    public void moveSlide() {
 
-        double input = gamepad2.left_stick_y;
-        int currentPos = slide.getCurrentPosition();
+        int current = slide.getCurrentPosition();
+        int limit = -3500;
 
-        if (Math.abs(input) > 0.05){
-            wasMoving = true;
-            slide.setPower(input);
-        }else {
-            if(wasMoving) {
-                holdPos = slide.getCurrentPosition();
-                wasMoving = false;
-                pid.reset();
+        double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
-            }
-            double power = pid.calculate(holdPos, currentPos);
-            slide.setPower(power);
+        // Se o joystick for movido para cima e a posição for menor que 0, move o motor
+        if (joystickInput > 0 && current < 0) {
+            slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slide.setPower(joystickInput);
+            holdingPosition = false; // O motor está se movendo, então não está segurando posição
         }
+        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
+        else if (joystickInput < 0 && current > limit+10) {
+            slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            slide.setPower(joystickInput);
+            holdingPosition = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
+        else if (!holdingPosition) { // O operador ! (negação) verifica se holdingPosition é false
+            slide.setTargetPosition(current); // Define a posição atual como alvo
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
+            holdingPosition = true; // Marca que o motor está segurando a posição
+        }
+
+        if(gamepad2.x){
+            slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+
+        telemetry.addData("Posição Slide:", current);
     }
 
-    //TODO: Mover base do atuador
-    public void moveBase(){
 
+    //TODO: Mover base do atuador
+    public void armBase(){
+        /*
+        int limit = 600;
+        if(gamepad2.right_stick_y > 0){
+            target += 100;
+        } else if (gamepad2.right_stick_y < 0) {
+            target -=100;
+        }
+        double minPower = 0.01;
+        double maxPower = 0.5;
+        PController pController = new PController(0.03);
+        pController.setInputRange(0, 650);
+        pController.setSetPoint(target);
+        pController.setOutputRange(minPower, maxPower);
+
+        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(armMotorR.getCurrentPosition() <= limit){
+            armMotorR.setPower(maxPower + pController.getComputedOutput(armMotorR.getCurrentPosition()));
+            armMotorL.setPower(maxPower + pController.getComputedOutput(armMotorL.getCurrentPosition()));
+        }else{
+            armMotorL.setPower(maxPower - pController.getComputedOutput(armMotorL.getCurrentPosition()));
+            armMotorR.setPower(maxPower - pController.getComputedOutput(armMotorR.getCurrentPosition()));
+
+        }
+
+         */
+        if (gamepad2.right_stick_y > 0) {
+            armMotorL.setPower(1);
+            armMotorR.setPower(1);
+        } else if (gamepad2.right_stick_y < 0) {
+            armMotorL.setPower(-1);
+            armMotorR.setPower(-1);
+        } else {
+            armMotorL.setPower(0);
+            armMotorR.setPower(0);
+        }
     }
 
     //Todo: Mover servo
     public void moveServo(){
 
-        if(gamepad2.right_bumper){
+        if(gamepad2.a){
             servo1.setPosition(1);
-            servo2.setPosition(1);
-        }else {
-            servo1.setPosition(0);
             servo2.setPosition(0);
+            telemetry.addLine("Pick");
+        }else if(gamepad2.y){
+            servo1.setPosition(0);
+            servo2.setPosition(1);
+            telemetry.addLine("Clip");
+        }else if(gamepad2.b){
+            servo1.setPosition(0.6);
+            servo2.setPosition(0.4);
+            telemetry.addLine("90");
+        }
+
+        if(gamepad2.right_bumper){
+            garra.setPosition(0.6);
+        }else{
+            garra.setPosition(0);
         }
     }
 }
