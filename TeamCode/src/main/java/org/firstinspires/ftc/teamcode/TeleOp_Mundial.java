@@ -38,7 +38,7 @@ public class TeleOp_Mundial extends OpMode {
     int estado;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
-    PID_teleoperado pidL, pidR;
+    PID_teleoperado pidR;
 
     @Override
     public void init() {
@@ -60,7 +60,6 @@ public class TeleOp_Mundial extends OpMode {
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        pidL = new PID_teleoperado(1, 0, 0);
         pidR = new PID_teleoperado(1, 0, 0);
 
     }
@@ -128,42 +127,35 @@ public class TeleOp_Mundial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
         double j = -gamepad2.right_stick_y;
-        int currentL = (armMotorL.getCurrentPosition());
         int currentR = (armMotorR.getCurrentPosition());
 
             if (j > 0) {
                 armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                armMotorR.setPower(j);
-                armMotorL.setPower(j);
+                armMotorR.setPower(j/2);
+                armMotorL.setPower(j/2);
 
                 pidR.stopHold();
-                pidL.stopHold();
 
                 modeBase = false;
             } else if (j < 0) {
                 armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                armMotorR.setPower(j);
-                armMotorL.setPower(j);
+                armMotorR.setPower(j/2);
+                armMotorL.setPower(j/2);
 
                 pidR.stopHold();
-                pidL.stopHold();
 
                 modeBase = false;
             } else if (!modeBase) {
                 pidR.setHoldPosition(currentR);
-                pidL.setHoldPosition(currentL);
-                double powerR = pidR.calculate(currentR);
-                double powerL = pidL.calculate(currentL);
-                armMotorR.setPower(powerR);
-                armMotorL.setPower(powerL);
+                power = pidR.calculate(currentR);
+                armMotorR.setPower(power);
+                armMotorL.setPower(power);
                 modeBase = true;
             }
 
-
-        telemetry.addData("Posição do LeftBase: ", currentL);
-        telemetry.addData("Posição do RightBase: ", currentR);
+            telemetry.addData("Posição do RightBase: ", currentR);
 
 
         if (gamepad2.dpad_down) {
