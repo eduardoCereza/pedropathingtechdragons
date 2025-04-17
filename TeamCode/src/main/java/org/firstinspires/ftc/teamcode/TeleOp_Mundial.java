@@ -140,11 +140,11 @@ public class TeleOp_Mundial extends OpMode {
                 double minPower = 0.01;
                 double maxPower = 0.5;
                 pid = new PController(1);
-                pid.setInputRange(0, 600);
+                pid.setInputRange(0, 1200);
                 pid.setSetPoint(currentR);
                 pid.setOutputRange(minPower, maxPower);
-                armMotorR.setPower(0.1 - pid.getComputedOutput(currentR));
-                armMotorL.setPower(0.1 - pid.getComputedOutput(currentL));
+                armMotorR.setPower(minPower - pid.getComputedOutput(currentR));
+                armMotorL.setPower(minPower - pid.getComputedOutput(currentL));
                 modeBase = true;
             }
     }
