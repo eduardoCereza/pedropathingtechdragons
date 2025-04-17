@@ -56,9 +56,7 @@ public class TeleOp_Mundial extends OpMode {
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        armMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
