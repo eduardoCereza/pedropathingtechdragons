@@ -131,31 +131,37 @@ public class TeleOp_Mundial extends OpMode {
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (j > 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (j < 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
+        if (j > 0.05 || j < -0.05) { // Deadzone pro analógico
+            armMotorR.setPower(j / 3);
+            armMotorL.setPower(j / 3);
             modeBase = false;
         } else if (!modeBase) {
+            // Guarda a posição atual como referência
             pidR = new PController(1);
             pidR.setSetPoint(currentR);
-            pidR.setOutputRange(-0.5, 0.5); // Agora tem faixa negativa e positiva
+            pidR.setOutputRange(-0.5, 0.5);
 
             pidL = new PController(1);
             pidL.setSetPoint(currentL);
             pidL.setOutputRange(-0.5, 0.5);
 
+            modeBase = true;
+        } else {
+            // Mantém travado
             double powerR = pidR.getComputedOutput(currentR);
             double powerL = pidL.getComputedOutput(currentL);
 
-            // Aplica diretamente o PID, que agora pode ser negativo ou positivo
+            // Garante força mínima suficiente (sem ultrapassar limites)
+            double minHoldPower = 0.03;
+            if (Math.abs(powerR) < minHoldPower) {
+                powerR = Math.copySign(minHoldPower, powerR);
+            }
+            if (Math.abs(powerL) < minHoldPower) {
+                powerL = Math.copySign(minHoldPower, powerL);
+            }
+
             armMotorR.setPower(powerR);
             armMotorL.setPower(powerL);
-
-            modeBase = true;
         }
 
     }
