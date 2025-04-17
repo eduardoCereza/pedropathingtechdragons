@@ -59,7 +59,7 @@ public class TeleOp_Mundial extends OpMode {
         
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        
+
     }
 
     @Override
@@ -124,6 +124,8 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
+        int currentR = armMotorR.getCurrentPosition();
+        int currentL = armMotorL.getCurrentPosition();
         double j = -gamepad2.right_stick_y;
 
             if (j > 0) {
@@ -137,8 +139,6 @@ public class TeleOp_Mundial extends OpMode {
             } else if (!modeBase) {
                 double minPower = 0.01;
                 double maxPower = 0.5;
-                int currentR = armMotorR.getCurrentPosition();
-                int currentL = armMotorL.getCurrentPosition();
                 pid = new PController(1);
                 pid.setInputRange(0, 600);
                 pid.setSetPoint(currentR);
