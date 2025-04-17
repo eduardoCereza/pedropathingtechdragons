@@ -33,20 +33,13 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
-
     double power;
     Servo servo1, servo2, garra;
     int estado;
-
     boolean holdingPosition = false, modeBase = false;
-
     private final Pose startPose = new Pose(0, 0, 0);
-
     PID_teleoperado pidL, pidR;
 
-    /**
-     * This method is call once when init is played, it initializes the follower
-     **/
     @Override
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
@@ -74,18 +67,11 @@ public class TeleOp_Mundial extends OpMode {
 
     }
 
-
-    /**
-     * This method is called once at the start of the OpMode.
-     **/
     @Override
     public void start() {
         follower.startTeleopDrive();
     }
 
-    /**
-     * This is the main loop of the opmode and runs continuously after play
-     **/
     @Override
     public void loop() {
 
