@@ -33,7 +33,7 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
-    double powerR, powerL;
+    double powerRU, powerRD, powerLU, powerLD;
     Servo servo1, servo2, garra;
     int estado;
     boolean holdingPosition = false, modeBase = false;
@@ -124,31 +124,64 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
-        int currentR = armMotorR.getCurrentPosition();
-        int currentL = armMotorL.getCurrentPosition();
-        double j = -gamepad2.right_stick_y;
+        if(gamepad2.dpad_down){
+            int target = 0;
+            double minPower = 0.5;
+            double maxPower = 1;
+            PController pid = new PController(1);
+            pid.setInputRange(0, 900);
+            pid.setSetPoint(target);
+            pid.setOutputRange(minPower, maxPower);
 
-        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if (j > 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (j < 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (!modeBase) {
-            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            armMotorR.setTargetPosition(currentR);
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorR.setPower(1);
+            powerLU = minPower + pid.getComputedOutput(armMotorL.getCurrentPosition());
+            powerLD = minPower - pid.getComputedOutput(armMotorL.getCurrentPosition());
 
-            modeBase = true; // Marca que o motor está segurando a posição
+            powerRU = minPower + pid.getComputedOutput(armMotorR.getCurrentPosition());
+            powerRD = minPower - pid.getComputedOutput(armMotorR.getCurrentPosition());
+
+            if(armMotorR.getCurrentPosition() < target){
+                armMotorR.setPower(powerRU);
+                armMotorL.setPower(powerLU);}
+            else {
+                armMotorR.setPower(powerRD);
+                armMotorL.setPower(powerLD);
+            }
+
+        } else if (gamepad2.dpad_up) {
+            int target = 600;
+            double minPower = 0.5;
+            double maxPower = 1;
+            PController pid = new PController(1);
+            pid.setInputRange(0, 900);
+            pid.setSetPoint(target);
+            pid.setOutputRange(minPower, maxPower);
+
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            powerLU = minPower + pid.getComputedOutput(armMotorL.getCurrentPosition());
+            powerLD = minPower - pid.getComputedOutput(armMotorL.getCurrentPosition());
+
+            powerRU = minPower + pid.getComputedOutput(armMotorR.getCurrentPosition());
+            powerRD = minPower - pid.getComputedOutput(armMotorR.getCurrentPosition());
+
+            if(armMotorR.getCurrentPosition() < target){
+                armMotorR.setPower(powerRU);
+                armMotorL.setPower(powerLU);}
+            else {
+                armMotorR.setPower(powerRD);
+                armMotorL.setPower(powerLD);
+            }
+
         }
 
     }
