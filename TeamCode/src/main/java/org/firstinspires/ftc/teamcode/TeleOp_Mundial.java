@@ -132,23 +132,30 @@ public class TeleOp_Mundial extends OpMode {
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (j > 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (j < 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (!modeBase) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(j);
+            armMotorL.setPower(j);
+
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
+        else if (j < 0) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(j);
+            armMotorL.setPower(j);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
+        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
             armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
-
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotorR.setTargetPosition(currentR);
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorR.setPower(1);
-
-            modeBase = true; // Marca que o motor está segurando a posição
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);// Mantém o motor na posição
+            armMotorL.setPower(0.2); // Aplica uma pequena potência para segurar a posição
+            armMotorR.setPower(0.2);
+            modeBase = true;
         }
 
     }
