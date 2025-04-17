@@ -128,24 +128,33 @@ public class TeleOp_Mundial extends OpMode {
         int currentL = armMotorL.getCurrentPosition();
         double j = -gamepad2.right_stick_y;
 
-            if (j > 0) {
-                armMotorR.setPower(j/2);
-                armMotorL.setPower(j/2);
-                modeBase = false;
-            } else if (j < 0) {
-                armMotorR.setPower(j/2);
-                armMotorL.setPower(j/2);
-                modeBase = false;
-            } else if(!modeBase) {
-                armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-                armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-                armMotorL.setPower(1);
+        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
-                armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-                armMotorR.setPower(1);// Aplica uma pequena potência para segurar a posição
-                modeBase = true;
-            }
+        if (j > 0) {
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
+            modeBase = false;
+        } else if (j < 0) {
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
+            modeBase = false;
+        } else if (!modeBase) {
+            double minPower = 0.01;
+            double maxPower = 0.5;
+            pidR = new PController(1);
+            pidR.setSetPoint(currentR);
+            pidR.setOutputRange(minPower, maxPower);
+
+            pidL = new PController(1);
+            pidL.setSetPoint(currentL);
+            pidL.setOutputRange(minPower, maxPower);
+
+            armMotorR.setPower(minPower - pidR.getComputedOutput(currentR) / 2);
+            armMotorL.setPower(minPower - pidL.getComputedOutput(currentL) / 2);
+            modeBase = true;
+
+        }
     }
 
     //Todo: Mover servo
