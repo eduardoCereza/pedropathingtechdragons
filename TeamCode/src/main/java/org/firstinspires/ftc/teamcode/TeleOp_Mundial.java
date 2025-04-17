@@ -38,7 +38,7 @@ public class TeleOp_Mundial extends OpMode {
     int estado;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
-    PController pid;
+    PController pidL, pidR;
 
     @Override
     public void init() {
@@ -131,20 +131,27 @@ public class TeleOp_Mundial extends OpMode {
             if (j > 0) {
                 armMotorR.setPower(j/2);
                 armMotorL.setPower(j/2);
-                modeBase = false;
+                //modeBase = false;
             } else if (j < 0) {
                 armMotorR.setPower(j/2);
                 armMotorL.setPower(j/2);
-                modeBase = false;
-            } else if (!modeBase) {
+                //modeBase = false;
+            } else {
                 double minPower = 0.01;
                 double maxPower = 0.5;
-                pid = new PController(1);
-                pid.setInputRange(0, 1200);
-                pid.setSetPoint(currentR);
-                pid.setOutputRange(minPower, maxPower);
-                armMotorR.setPower(minPower - pid.getComputedOutput(currentR));
-                armMotorL.setPower(minPower - pid.getComputedOutput(currentL));
+                pidL = new PController(1);
+                pidL.setInputRange(0, 1200);
+                pidL.setSetPoint(currentL);
+                pidL.setOutputRange(minPower, maxPower);
+
+                pidR = new PController(1);
+                pidR.setInputRange(0, 1200);
+                pidR.setSetPoint(currentR);
+                pidR.setOutputRange(minPower, maxPower);
+
+
+                armMotorR.setPower(maxPower - pidR.getComputedOutput(currentR));
+                armMotorL.setPower(maxPower - pidL.getComputedOutput(currentL));
                 modeBase = true;
             }
     }
