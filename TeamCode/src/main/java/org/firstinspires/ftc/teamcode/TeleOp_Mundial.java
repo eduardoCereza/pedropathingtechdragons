@@ -36,7 +36,7 @@ public class TeleOp_Mundial extends OpMode {
 
     double power;
     Servo servo1, servo2, garra;
-    int target;
+    int estado;
 
     boolean holdingPosition = false, modeBase = false;
 
@@ -146,30 +146,45 @@ public class TeleOp_Mundial extends OpMode {
         double j = gamepad2.right_stick_y;
         int currentL = (armMotorL.getCurrentPosition());
         int currentR = (armMotorR.getCurrentPosition());
+        int limit = 650;
 
-        if (j > 0) {
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(j);
-            armMotorL.setPower(j);
-
-            pidR.stopHold();
-            pidL.stopHold();
-
-            modeBase = false;
+        if(currentR >= limit){
+            estado = 1;
+        }else{
+            estado = 2;
         }
-        else if (j < 0) {
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(j);
-            armMotorL.setPower(j);
 
-            pidR.stopHold();
-            pidL.stopHold();
+        if(estado == 2) {
+            if (j > 0) {
+                armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorR.setPower(j);
+                armMotorL.setPower(j);
 
-            modeBase = false;
-        }
-        else if (!modeBase) {
+                pidR.stopHold();
+                pidL.stopHold();
+
+                modeBase = false;
+            } else if (j < 0) {
+                armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorR.setPower(j);
+                armMotorL.setPower(j);
+
+                pidR.stopHold();
+                pidL.stopHold();
+
+                modeBase = false;
+            } else if (!modeBase) {
+                pidR.setHoldPosition(currentR);
+                pidL.setHoldPosition(currentL);
+                double powerR = pidR.calculate(currentR);
+                double powerL = pidL.calculate(currentL);
+                armMotorR.setPower(powerR);
+                armMotorL.setPower(powerL);
+                modeBase = true;
+            }
+        }else if (estado == 1){
             pidR.setHoldPosition(currentR);
             pidL.setHoldPosition(currentL);
             double powerR = pidR.calculate(currentR);
@@ -177,6 +192,16 @@ public class TeleOp_Mundial extends OpMode {
             armMotorR.setPower(powerR);
             armMotorL.setPower(powerL);
             modeBase = true;
+
+            if (j < 0) {
+                armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                armMotorR.setPower(j);
+                armMotorL.setPower(j);
+
+                pidR.stopHold();
+                pidL.stopHold();
+            }
         }
 
         telemetry.addData("Posição do LeftBase: ", currentL);
