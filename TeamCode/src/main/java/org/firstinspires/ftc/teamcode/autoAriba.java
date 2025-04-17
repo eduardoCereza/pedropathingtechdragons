@@ -131,7 +131,6 @@ public class autoAriba extends OpMode {
         pathTimer.resetTimer();
     }
 
-
     //loop
     @Override
     public void loop() {
