@@ -279,8 +279,8 @@ public class autoAriba extends OpMode {
         isopen = 0;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        leftS = hardwareMap.get(Servo.class, "lservo");
-        rightS = hardwareMap.get(Servo.class, "rservo");
+        leftS = hardwareMap.get(Servo.class, "servo2");
+        rightS = hardwareMap.get(Servo.class, "servo2");
         garra = hardwareMap.get(Servo.class, "garra");
         Left = hardwareMap.get(DcMotorEx.class, "Left");
         Right = hardwareMap.get(DcMotorEx.class, "Right");
