@@ -15,13 +15,18 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 //importações não referentes ao pedro pathing
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 
 @Autonomous(name = "Ariba mexico", group = "Examples")
 public class autoAriba extends OpMode {
 
-    private Servo garra; //servo da garra/ponta
+    private Servo servo1, servo2, garra;
+
+    private DcMotor slide, armMotorL, armMotorR;//servo da garra/ponta
 
     private Follower follower; //sla tbm
 
@@ -139,8 +144,6 @@ public class autoAriba extends OpMode {
         if (pose.getX() == ClipPose.getX() && pose.getY() == ClipPose.getY()){
 
 
-            garra.setPosition(1.0);
-
         }
 
         follower.update();
@@ -156,9 +159,22 @@ public class autoAriba extends OpMode {
     //se precisar fazer alguma ação no init tem que por aq
     @Override
     public void init() {
+        slide = hardwareMap.get(DcMotorEx.class, "gobilda");
+        slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        servo1 = hardwareMap.get(Servo.class, "servo1");
+        servo2 = hardwareMap.get(Servo.class, "servo2");
         garra = hardwareMap.get(Servo.class, "garra");
-        garra.setPosition(0); // posição inicial fechada
+
+        armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
+        armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
+        armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
