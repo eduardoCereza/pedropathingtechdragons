@@ -280,10 +280,10 @@ public class autoAriba extends OpMode {
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         leftS = hardwareMap.get(Servo.class, "servo2");
-        rightS = hardwareMap.get(Servo.class, "servo2");
+        rightS = hardwareMap.get(Servo.class, "servo1");
         garra = hardwareMap.get(Servo.class, "garra");
-        Left = hardwareMap.get(DcMotorEx.class, "Left");
-        Right = hardwareMap.get(DcMotorEx.class, "Right");
+        Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
+        Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();

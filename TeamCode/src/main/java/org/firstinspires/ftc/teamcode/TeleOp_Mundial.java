@@ -131,27 +131,19 @@ public class TeleOp_Mundial extends OpMode {
             if (j > 0) {
                 armMotorR.setPower(j/2);
                 armMotorL.setPower(j/2);
-                //modeBase = false;
+                modeBase = false;
             } else if (j < 0) {
                 armMotorR.setPower(j/2);
                 armMotorL.setPower(j/2);
-                //modeBase = false;
-            } else {
-                double minPower = 0.01;
-                double maxPower = 0.5;
-                pidL = new PController(1);
-                pidL.setInputRange(0, 1200);
-                pidL.setSetPoint(currentL);
-                pidL.setOutputRange(minPower, maxPower);
+                modeBase = false;
+            } else if(!modeBase) {
+                armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
+                armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+                armMotorL.setPower(1);
 
-                pidR = new PController(1);
-                pidR.setInputRange(0, 1200);
-                pidR.setSetPoint(currentR);
-                pidR.setOutputRange(minPower, maxPower);
-
-
-                armMotorR.setPower(maxPower - pidR.getComputedOutput(currentR));
-                armMotorL.setPower(maxPower - pidL.getComputedOutput(currentL));
+                armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
+                armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+                armMotorR.setPower(1);// Aplica uma pequena potência para segurar a posição
                 modeBase = true;
             }
     }
