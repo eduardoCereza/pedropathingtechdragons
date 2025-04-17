@@ -25,6 +25,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class autoAriba extends OpMode {
 
     private Servo servo1, servo2, garra;
+    private tes;
 
     private DcMotor slide, armMotorL, armMotorR;//servo da garra/ponta
 
