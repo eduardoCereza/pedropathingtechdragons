@@ -40,10 +40,6 @@ public class TeleOp_Mundial extends OpMode {
     private final Pose startPose = new Pose(0, 0, 0);
     PController pidL, pidR;
 
-    // Declarar isso fora do loop se ainda não estiver
-    int holdPositionR = 0;
-    int holdPositionL = 0;
-
     @Override
     public void init() {
         Constants.setConstants(FConstants.class, LConstants.class);
@@ -92,6 +88,7 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover Slide
     public void moveSlide() {
+
         int current = slide.getCurrentPosition();
         int limit = -3500;
 
@@ -127,7 +124,6 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
-
         int currentR = armMotorR.getCurrentPosition();
         int currentL = armMotorL.getCurrentPosition();
         double j = -gamepad2.right_stick_y;
@@ -135,42 +131,32 @@ public class TeleOp_Mundial extends OpMode {
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (Math.abs(j) > 0.05) { // controle manual
-            armMotorR.setPower(j / 3);
-            armMotorL.setPower(j / 3);
+        if (j > 0) {
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
+            modeBase = false;
+        } else if (j < 0) {
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
             modeBase = false;
         } else if (!modeBase) {
-            // Guarda a posição atual para travar
-            holdPositionR = currentR;
-            holdPositionL = currentL;
-
             pidR = new PController(1);
-            pidR.setSetPoint(holdPositionR);
-            pidR.setOutputRange(-0.5, 0.5);
+            pidR.setSetPoint(currentR);
+            pidR.setOutputRange(0.01, 0.5); // Agora tem faixa negativa e positiva
 
             pidL = new PController(1);
-            pidL.setSetPoint(holdPositionL);
-            pidL.setOutputRange(-0.5, 0.5);
+            pidL.setSetPoint(currentL);
+            pidL.setOutputRange(0.01, 0.5);
 
-            modeBase = true;
-        } else {
-            // Mantém na posição travada
             double powerR = pidR.getComputedOutput(currentR);
             double powerL = pidL.getComputedOutput(currentL);
 
-            // Aplica força mínima se necessário (anti-gravidade leve)
-            double minHoldPower = 0.03;
-            if (Math.abs(powerR) < minHoldPower) {
-                powerR = 0;
-            }
-            if (Math.abs(powerL) < minHoldPower) {
-                powerL = 0;
-            }
-
+            // Aplica diretamente o PID, que agora pode ser negativo ou positivo
             armMotorR.setPower(powerR);
             armMotorL.setPower(powerL);
-        }
 
+            modeBase = true;
+        }
 
     }
 
