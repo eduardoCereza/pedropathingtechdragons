@@ -128,6 +128,14 @@ public class TeleOp_Mundial extends OpMode {
         int currentL = armMotorL.getCurrentPosition();
         double j = -gamepad2.right_stick_y;
 
+        pidR = new PController(1);
+        pidR.setSetPoint(currentR);
+        pidR.setOutputRange(0.01, 0.5); // Agora tem faixa negativa e positiva
+
+        pidL = new PController(1);
+        pidL.setSetPoint(currentL);
+        pidL.setOutputRange(0.01, 0.5);
+
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -140,18 +148,15 @@ public class TeleOp_Mundial extends OpMode {
             armMotorL.setPower(j/3);
             modeBase = false;
         } else if (!modeBase) {
-            pidR = new PController(1);
-            pidR.setSetPoint(currentR);
-            pidR.setOutputRange(0.01, 0.5); // Agora tem faixa negativa e positiva
-
-            pidL = new PController(1);
-            pidL.setSetPoint(currentL);
-            pidL.setOutputRange(0.01, 0.5);
-
             double powerR = pidR.getComputedOutput(currentR);
             double powerL = pidL.getComputedOutput(currentL);
 
-            // Aplica diretamente o PID, que agora pode ser negativo ou positivo
+            armMotorL.setTargetPosition(currentL);
+            armMotorR.setTargetPosition(currentR);
+
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
             armMotorR.setPower(powerR);
             armMotorL.setPower(powerL);
 
