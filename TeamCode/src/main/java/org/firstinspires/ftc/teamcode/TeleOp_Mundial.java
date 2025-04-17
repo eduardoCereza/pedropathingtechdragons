@@ -140,20 +140,24 @@ public class TeleOp_Mundial extends OpMode {
             armMotorL.setPower(j/3);
             modeBase = false;
         } else if (!modeBase) {
-            double minPower = 0.01;
-            double maxPower = 0.5;
             pidR = new PController(1);
             pidR.setSetPoint(currentR);
-            pidR.setOutputRange(minPower, maxPower);
+            pidR.setOutputRange(-0.5, 0.5); // Agora tem faixa negativa e positiva
 
             pidL = new PController(1);
-            pidL.setOutputRange(minPower, maxPower);
+            pidL.setSetPoint(currentL);
+            pidL.setOutputRange(-0.5, 0.5);
 
-            armMotorR.setPower(minPower - pidR.getComputedOutput(currentR) / 2);
-            armMotorL.setPower(minPower - pidL.getComputedOutput(currentL) / 2);
+            double powerR = pidR.getComputedOutput(currentR);
+            double powerL = pidL.getComputedOutput(currentL);
+
+            // Aplica diretamente o PID, que agora pode ser negativo ou positivo
+            armMotorR.setPower(powerR);
+            armMotorL.setPower(powerL);
+
             modeBase = true;
-
         }
+
     }
 
     //Todo: Mover servo
