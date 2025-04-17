@@ -147,7 +147,6 @@ public class TeleOp_Mundial extends OpMode {
             pidR.setOutputRange(minPower, maxPower);
 
             pidL = new PController(1);
-            pidL.setSetPoint(currentL);
             pidL.setOutputRange(minPower, maxPower);
 
             armMotorR.setPower(minPower - pidR.getComputedOutput(currentR) / 2);
