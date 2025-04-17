@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -33,12 +34,15 @@ public class TeleOp_Mundial extends OpMode {
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
 
+    double power;
     Servo servo1, servo2, garra;
     int target;
 
-    boolean holdingPosition = false;
+    boolean holdingPosition = false, modeBase = false;
 
     private final Pose startPose = new Pose(0, 0, 0);
+
+    PID_teleoperado pidL, pidR;
 
     /**
      * This method is call once when init is played, it initializes the follower
@@ -60,8 +64,14 @@ public class TeleOp_Mundial extends OpMode {
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        armMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        pidL = new PID_teleoperado(1, 0, 0);
+        pidR = new PID_teleoperado(1, 0, 0);
+
     }
 
 
@@ -93,7 +103,6 @@ public class TeleOp_Mundial extends OpMode {
 
         /* Update Telemetry to the Driver Hub */
         telemetry.update();
-
     }
 
     //TODO: Mover Slide
@@ -133,33 +142,51 @@ public class TeleOp_Mundial extends OpMode {
 
 
     //TODO: Mover base do atuador
-    public void armBase(){
-        int limit = 600;
-        if(gamepad2.right_stick_y > 0){
-            target += 100;
-        } else if (gamepad2.right_stick_y < 0) {
-            target -=100;
+    public void armBase() {
+        double j = gamepad2.right_stick_y;
+        int currentL = (armMotorL.getCurrentPosition());
+        int currentR = (armMotorR.getCurrentPosition());
+
+        if (j > 0) {
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(j);
+            armMotorL.setPower(j);
+
+            pidR.stopHold();
+            pidL.stopHold();
+
+            modeBase = false;
         }
-        double minPower = 0.01;
-        double maxPower = 0.5;
-        PController pController = new PController(0.03);
-        pController.setInputRange(0, 650);
-        pController.setSetPoint(target);
-        pController.setOutputRange(minPower, maxPower);
+        else if (j < 0) {
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(j);
+            armMotorL.setPower(j);
 
-        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            pidR.stopHold();
+            pidL.stopHold();
 
-        if(armMotorR.getCurrentPosition() <= limit){
-            armMotorR.setPower(maxPower + pController.getComputedOutput(armMotorR.getCurrentPosition()));
-            armMotorL.setPower(maxPower + pController.getComputedOutput(armMotorL.getCurrentPosition()));
-        }else{
-            armMotorL.setPower(maxPower - pController.getComputedOutput(armMotorL.getCurrentPosition()));
-            armMotorR.setPower(maxPower - pController.getComputedOutput(armMotorR.getCurrentPosition()));
-
+            modeBase = false;
+        }
+        else if (!modeBase) {
+            pidR.setHoldPosition(currentR);
+            pidL.setHoldPosition(currentL);
+            double powerR = pidR.calculate(currentR);
+            double powerL = pidL.calculate(currentL);
+            armMotorR.setPower(powerR);
+            armMotorL.setPower(powerL);
+            modeBase = true;
         }
 
+        telemetry.addData("Posição do LeftBase: ", currentL);
+        telemetry.addData("Posição do RightBase: ", currentR);
 
+
+        if (gamepad2.dpad_down) {
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
     //Todo: Mover servo
