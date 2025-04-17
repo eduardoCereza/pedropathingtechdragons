@@ -127,10 +127,9 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
-        double j = gamepad2.right_stick_y;
+        double j = -gamepad2.right_stick_y;
         int currentL = (armMotorL.getCurrentPosition());
         int currentR = (armMotorR.getCurrentPosition());
-        int limit = 650;
 
             if (j > 0) {
                 armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
