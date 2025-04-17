@@ -142,6 +142,7 @@ public class autoAriba extends OpMode {
     private final Pose move10 = new Pose(5, -30, Math.toRadians(180)); //empurrou o terceiro sample para a area do jogador humano
     private final Pose move11 = new Pose(30, -30, Math.toRadians(180)); // voltou para frente
     private PathChain traj1; //conjunto de trajetórias
+
     public void buildPaths() {
 
         traj1 = follower.pathBuilder()
@@ -230,9 +231,9 @@ public class autoAriba extends OpMode {
     public void loop() {
 
         Pose pose = follower.getPose();
-        if (pose.getX() == ClipPose.getX() && pose.getY() == ClipPose.getY()){
+        if (pose.getX() == startPose.getX() && pose.getY() == startPose.getY()){
 
-            open();
+            subir(100);
         }
 
         if (follower.isBusy() && slide.getPower() < 0.3){
