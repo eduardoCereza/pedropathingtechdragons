@@ -153,7 +153,8 @@ public class TeleOp_Mundial extends OpMode {
                 armMotorL.setPower(powerLD);
             }
 
-        } else if (gamepad2.dpad_up) {
+        }
+        else if (gamepad2.dpad_up) {
             int target = 600;
             double minPower = 0.5;
             double maxPower = 1;
@@ -176,8 +177,8 @@ public class TeleOp_Mundial extends OpMode {
 
             if(armMotorR.getCurrentPosition() < target){
                 armMotorR.setPower(powerRU);
-                armMotorL.setPower(powerLU);}
-            else {
+                armMotorL.setPower(powerLU);
+            } else {
                 armMotorR.setPower(powerRD);
                 armMotorL.setPower(powerLD);
             }
