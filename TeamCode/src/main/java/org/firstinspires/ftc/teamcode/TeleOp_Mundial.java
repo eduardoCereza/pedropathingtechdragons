@@ -35,7 +35,7 @@ public class TeleOp_Mundial extends OpMode {
     DcMotorEx slide, armMotorL, armMotorR;
     double powerRU, powerRD, powerLU, powerLD;
     Servo servo1, servo2, garra;
-    int estado;
+    int target;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
     PController pidL, pidR;
@@ -121,72 +121,41 @@ public class TeleOp_Mundial extends OpMode {
         telemetry.addData("Posição Slide:", current);
     }
 
-
     //TODO: Mover base do atuador
     public void armBase() {
-        if(gamepad2.dpad_down){
-            int target = 0;
-            double minPower = 0.5;
-            double maxPower = 1;
-            PController pid = new PController(1);
-            pid.setInputRange(0, 900);
-            pid.setSetPoint(target);
-            pid.setOutputRange(minPower, maxPower);
-
-            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            powerLU = minPower + pid.getComputedOutput(armMotorL.getCurrentPosition());
-            powerLD = minPower - pid.getComputedOutput(armMotorL.getCurrentPosition());
-
-            powerRU = minPower + pid.getComputedOutput(armMotorR.getCurrentPosition());
-            powerRD = minPower - pid.getComputedOutput(armMotorR.getCurrentPosition());
-
-            if(armMotorR.getCurrentPosition() < target){
-                armMotorR.setPower(powerRU);
-                armMotorL.setPower(powerLU);}
-            else {
-                armMotorR.setPower(powerRD);
-                armMotorL.setPower(powerLD);
-            }
-
-        }
-        else if (gamepad2.dpad_up) {
-            int target = 600;
-            double minPower = 0.5;
-            double maxPower = 1;
-            PController pid = new PController(1);
-            pid.setInputRange(0, 900);
-            pid.setSetPoint(target);
-            pid.setOutputRange(minPower, maxPower);
-
-            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            powerLU = minPower + pid.getComputedOutput(armMotorL.getCurrentPosition());
-            powerLD = minPower - pid.getComputedOutput(armMotorL.getCurrentPosition());
-
-            powerRU = minPower + pid.getComputedOutput(armMotorR.getCurrentPosition());
-            powerRD = minPower - pid.getComputedOutput(armMotorR.getCurrentPosition());
-
-            if(armMotorR.getCurrentPosition() < target){
-                armMotorR.setPower(powerRU);
-                armMotorL.setPower(powerLU);
-            } else {
-                armMotorR.setPower(powerRD);
-                armMotorL.setPower(powerLD);
-            }
-
+        if(gamepad2.dpad_down) {
+            target = 0;
+        }else if (gamepad2.dpad_up){
+            target = 600;
         }
 
+        double minPower = 0.5;
+        double maxPower = 1;
+        PController pid = new PController(1);
+        pid.setInputRange(0, 900);
+        pid.setSetPoint(target);
+        pid.setOutputRange(minPower, maxPower);
+
+        armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        powerLU = minPower + pid.getComputedOutput(armMotorL.getCurrentPosition());
+        powerLD = minPower - pid.getComputedOutput(armMotorL.getCurrentPosition());
+
+        powerRU = minPower + pid.getComputedOutput(armMotorR.getCurrentPosition());
+        powerRD = minPower - pid.getComputedOutput(armMotorR.getCurrentPosition());
+
+        if(armMotorR.getCurrentPosition() < target){
+            armMotorR.setPower(powerRU);
+            armMotorL.setPower(powerLU);}
+        else {
+            armMotorR.setPower(powerRD);
+            armMotorL.setPower(powerLD);
+        }
     }
-
     //Todo: Mover servo
     public void moveServo(){
 
