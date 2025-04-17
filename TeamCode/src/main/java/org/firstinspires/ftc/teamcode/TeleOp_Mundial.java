@@ -128,39 +128,40 @@ public class TeleOp_Mundial extends OpMode {
         int currentL = armMotorL.getCurrentPosition();
         double j = -gamepad2.right_stick_y;
 
-        pidR = new PController(1);
-        pidR.setSetPoint(currentR);
-        pidR.setOutputRange(0.01, 0.5); // Agora tem faixa negativa e positiva
-
-        pidL = new PController(1);
-        pidL.setSetPoint(currentL);
-        pidL.setOutputRange(0.01, 0.5);
-
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (j > 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (j < 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
+        if (j > 0.05 || j < -0.05) { // Deadzone pro analógico
+            armMotorR.setPower(j / 3);
+            armMotorL.setPower(j / 3);
             modeBase = false;
         } else if (!modeBase) {
-            double powerR = pidR.getComputedOutput(currentR);
-            double powerL = pidL.getComputedOutput(currentL);
+            // Guarda a posição atual como referência
+            pidR = new PController(1);
+            pidR.setSetPoint(currentR);
+            pidR.setOutputRange(-0.5, 0.5);
 
-            armMotorL.setTargetPosition(currentL);
-            armMotorR.setTargetPosition(currentR);
+            pidL = new PController(1);
+            pidL.setSetPoint(currentL);
+            pidL.setOutputRange(-0.5, 0.5);
 
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            modeBase = true;
+        } else {
+            // Mantém travado
+            double powerR = 0.01 - pidR.getComputedOutput(currentR);
+            double powerL = 0.01 - pidL.getComputedOutput(currentL);
+
+            // Garante força mínima suficiente (sem ultrapassar limites)
+            double minHoldPower = 0.03;
+            if (Math.abs(powerR) < minHoldPower) {
+                powerR = Math.copySign(minHoldPower, powerR);
+            }
+            if (Math.abs(powerL) < minHoldPower) {
+                powerL = Math.copySign(minHoldPower, powerL);
+            }
 
             armMotorR.setPower(powerR);
             armMotorL.setPower(powerL);
-
-            modeBase = true;
         }
 
     }
