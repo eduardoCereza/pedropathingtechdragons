@@ -149,13 +149,22 @@ public class TeleOp_Mundial extends OpMode {
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
         else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
-            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorR.setTargetPosition(currentR);
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);// Mantém o motor na posição
-            armMotorL.setPower(0.2); // Aplica uma pequena potência para segurar a posição
-            armMotorR.setPower(0.2);
-            modeBase = true;
+            PController controllerL = new PController(1);
+            controllerL.setInputRange(-4000, 4000);
+            controllerL.setSetPoint(currentL);
+            controllerL.setOutputRange(0.05, 0.5);
+
+            PController controllerR = new PController(1);
+            controllerR.setInputRange(-4000, 4000);
+            controllerR.setSetPoint(currentR);
+            controllerR.setOutputRange(0.05, 0.5);
+
+            double powerL = 0.05 + controllerL.getComputedOutput(armMotorL.getCurrentPosition());
+            double powerR = 0.05 + controllerL.getComputedOutput(armMotorR.getCurrentPosition());
+
+            armMotorL.setPower(powerL);
+            armMotorR.setPower(powerR);
+
         }
 
     }
