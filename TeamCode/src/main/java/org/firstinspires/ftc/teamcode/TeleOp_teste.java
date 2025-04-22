@@ -132,10 +132,9 @@ public class TeleOp_teste extends OpMode {
             }
 
                 pidL = new PController(0.5);
-                pidL.setInputRange(0, 600);
+                pidL.setInputRange(0, 1000);
                 pidL.setSetPoint(targetL);
                 pidL.setOutputRange(min, max);
-
 
                 pidR = new PController(0.5);
                 pidR.setInputRange(0, 1000);
