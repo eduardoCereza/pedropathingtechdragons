@@ -35,7 +35,6 @@ public class TeleOp_Mundial extends OpMode {
     DcMotorEx slide, armMotorL, armMotorR;
     double powerR, powerL;
     Servo servo1, servo2, garra;
-    int estado;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
     PController pidL, pidR;
@@ -140,13 +139,20 @@ public class TeleOp_Mundial extends OpMode {
             armMotorL.setPower(j/3);
             modeBase = false;
         } else if (!modeBase) {
-            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
+            pidL.setInputRange(0, 650);
+            pidL.setSetPoint(currentL);
+            pidL.setOutputRange(0.05, 0.5);
 
-            armMotorR.setTargetPosition(currentR);
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorR.setPower(1);
+            pidR.setInputRange(0, 1000);
+            pidL.setSetPoint(currentR);
+            pidL.setOutputRange(0.05, 0.5);
+
+            powerL = pidL.getComputedOutput(armMotorL.getCurrentPosition());
+            powerR = pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+            armMotorL.setPower(powerL);
+            armMotorR.setPower(powerR);
+
 
             modeBase = true; // Marca que o motor está segurando a posição
         }
