@@ -1,21 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.util.Constants;
-import com.pedropathing.util.PIDFController;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import  com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
@@ -29,8 +21,8 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  */
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial")
-public class TeleOp_Mundial extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado teste")
+public class TeleOp_teste extends OpMode {
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
     double powerR, powerL;
@@ -38,6 +30,8 @@ public class TeleOp_Mundial extends OpMode {
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
     PController pidL, pidR;
+
+    int targetR, targetL;
 
     @Override
     public void init() {
@@ -128,45 +122,24 @@ public class TeleOp_Mundial extends OpMode {
             double max = 0.5;
 
             if(gamepad2.dpad_up) {
-                int target = 600;
-
-                pidL = new PController(0.5);
-                pidL.setInputRange(0, 600);
-                pidL.setSetPoint(600);
-                pidL.setOutputRange(min, max);
-
-
-                pidR = new PController(0.5);
-                pidR.setInputRange(0, 1000);
-                pidR.setSetPoint(target);
-                pidR.setOutputRange(min, max);
-
-                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-                if (armMotorR.getCurrentPosition() < target) {
-                    armMotorL.setPower(powerL);
-                    armMotorR.setPower(powerR);
-                }else {
-                    armMotorL.setPower(powerL2);
-                    armMotorR.setPower(powerR2);
-                }
+                targetR = 600;
+                targetL = 600;
             }
+
             else if(gamepad2.dpad_down) {
-                int target = 0;
+                targetR = 0;
+                targetL = 0;
+            }
 
                 pidL = new PController(0.5);
                 pidL.setInputRange(0, 600);
-                pidL.setSetPoint(0);
+                pidL.setSetPoint(targetL);
                 pidL.setOutputRange(min, max);
 
 
                 pidR = new PController(0.5);
                 pidR.setInputRange(0, 1000);
-                pidR.setSetPoint(target);
+                pidR.setSetPoint(targetR);
                 pidR.setOutputRange(min, max);
 
                 powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
@@ -175,14 +148,14 @@ public class TeleOp_Mundial extends OpMode {
                 double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
                 double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                if (armMotorR.getCurrentPosition() < target) {
+                if (armMotorR.getCurrentPosition() < targetR) {
                     armMotorL.setPower(powerL);
                     armMotorR.setPower(powerR);
                 }else {
                     armMotorL.setPower(powerL2);
                     armMotorR.setPower(powerR2);
                 }
-            }
+
 
     }
 
