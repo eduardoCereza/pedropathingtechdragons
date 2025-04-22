@@ -132,39 +132,23 @@ public class TeleOp_Mundial extends OpMode {
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if (j > 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(j);
-            armMotorL.setPower(j);
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
+            modeBase = false;
+        } else if (j < 0) {
+            armMotorR.setPower(j/3);
+            armMotorL.setPower(j/3);
+            modeBase = false;
+        } else if (!modeBase) {
+            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
 
-            modeBase = false; // O motor está se movendo, então não está segurando posição
-        }
-        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (j < 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(j);
-            armMotorL.setPower(j);
-            modeBase = false; // O motor está se movendo, então não está segurando posição
-        }
-        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
-        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
-            PController controllerL = new PController(1);
-            controllerL.setInputRange(-4000, 4000);
-            controllerL.setSetPoint(currentL);
-            controllerL.setOutputRange(0.05, 0.5);
+            armMotorR.setTargetPosition(currentR);
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            armMotorR.setPower(1);
 
-            PController controllerR = new PController(1);
-            controllerR.setInputRange(-4000, 4000);
-            controllerR.setSetPoint(currentR);
-            controllerR.setOutputRange(0.05, 0.5);
-
-            double powerL = 0.05 + controllerL.getComputedOutput(armMotorL.getCurrentPosition());
-            double powerR = 0.05 + controllerL.getComputedOutput(armMotorR.getCurrentPosition());
-
-            armMotorL.setPower(powerL);
-            armMotorR.setPower(powerR);
-
+            modeBase = true; // Marca que o motor está segurando a posição
         }
 
     }
