@@ -130,32 +130,67 @@ public class TeleOp_Mundial extends OpMode {
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if (j > 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (j < 0) {
-            armMotorR.setPower(j/3);
-            armMotorL.setPower(j/3);
-            modeBase = false;
-        } else if (!modeBase) {
-            pidL.setInputRange(0, 650);
-            pidL.setSetPoint(currentL);
-            pidL.setOutputRange(0.05, 0.5);
+            double min = 0.05;
+            double max = 0.5;
 
-            pidR.setInputRange(0, 1000);
-            pidL.setSetPoint(currentR);
-            pidL.setOutputRange(0.05, 0.5);
+            if(gamepad2.dpad_up) {
+                int target = 600;
 
-            powerL = 0.05 + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-            powerR = 0.05 + pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-            armMotorL.setPower(powerL);
-            armMotorR.setPower(powerR);
+                pidL = new PController(0.5);
+                pidL.setInputRange(0, 600);
+                pidL.setSetPoint(600);
+                pidL.setOutputRange(min, max);
 
 
-            modeBase = true; // Marca que o motor está segurando a posição
-        }
+                pidR = new PController(0.5);
+                pidR.setInputRange(0, 1000);
+                pidR.setSetPoint(target);
+                pidR.setOutputRange(min, max);
+
+                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
+                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
+                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+                if (armMotorR.getCurrentPosition() < target) {
+                    armMotorL.setPower(powerL);
+                    armMotorR.setPower(powerR);
+                }else {
+                    armMotorL.setPower(powerL2);
+                    armMotorR.setPower(powerR2);
+                }
+            }else if(gamepad2.dpad_down) {
+                int target = 0;
+
+                pidL = new PController(0.5);
+                pidL.setInputRange(0, 600);
+                pidL.setSetPoint(0);
+                pidL.setOutputRange(min, max);
+
+
+                pidR = new PController(0.5);
+                pidR.setInputRange(0, 1000);
+                pidR.setSetPoint(target);
+                pidR.setOutputRange(min, max);
+
+                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
+                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
+                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+                if (armMotorR.getCurrentPosition() < target) {
+                    armMotorL.setPower(powerL);
+                    armMotorR.setPower(powerR);
+                }else {
+                    armMotorL.setPower(powerL2);
+                    armMotorR.setPower(powerR2);
+                }
+            }
+
+
+
 
     }
 

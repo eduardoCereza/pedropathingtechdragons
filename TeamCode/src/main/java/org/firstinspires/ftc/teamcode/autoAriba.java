@@ -102,7 +102,7 @@ public class autoAriba extends OpMode {
     }
     public void extender( int target){
 
-        while (slide.getCurrentPosition() >= target){
+        while (slide.getCurrentPosition() <= target){
             slide.setTargetPosition(-target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(-1.0);
@@ -203,19 +203,10 @@ public class autoAriba extends OpMode {
             case 0:
 
                 //inicia a trajetória
-                follower.followPath(traj1, true);
+                recuar(1700);
 
                 //troca para fazer nada
-                setPathState(1);
-                break;
 
-            //faz nada
-            case 1:
-                if(!follower.isBusy()) {
-
-                    setPathState(-1);
-                }
-                break;
 
         }
     }
@@ -229,12 +220,6 @@ public class autoAriba extends OpMode {
     //loop
     @Override
     public void loop() {
-
-        Pose pose = follower.getPose();
-        if (pose.getX() == startPose.getX() && pose.getY() == startPose.getY()){
-
-            subir(100);
-        }
 
         if (follower.isBusy() && slide.getPower() < 0.3){
             int currentPosition = slide.getCurrentPosition();
@@ -289,6 +274,8 @@ public class autoAriba extends OpMode {
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
+
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
