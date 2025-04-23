@@ -151,16 +151,16 @@ public class TeleOp_teste extends OpMode {
         if (joystickInput > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(joystickInput);
-            armMotorR.setPower(joystickInput);
+            armMotorL.setPower(joystickInput/2);
+            armMotorR.setPower(joystickInput/2);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (joystickInput < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-joystickInput);
-            armMotorR.setPower(-joystickInput);
+            armMotorL.setPower(joystickInput/2);
+            armMotorR.setPower(joystickInput/2);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição

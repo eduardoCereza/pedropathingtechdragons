@@ -123,81 +123,48 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
+        double joystickInput = gamepad2.right_stick_y;
+        double min = 0.05;
+        double max = 0.5;
+        if (joystickInput > 0) {
+            armMotorL.setPower(joystickInput/2);
+            armMotorR.setPower(joystickInput/2);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
+        else if (joystickInput < 0) {
+            armMotorL.setPower(joystickInput/2);
+            armMotorR.setPower(joystickInput/2);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        else if (!modeBase) {
 
-            double min = 0.05;
-            double max = 0.5;
+            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            telemetry.addLine("Posição baixo");
 
-        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-            if(gamepad2.dpad_up) {
-                telemetry.addLine("Posição cima");
-
-                int target = 326;
-                int targetL = 289;
-
-                pidL = new PController(0.5);
-                pidL.setInputRange(0, 600);
-                pidL.setSetPoint(targetL);
-                pidL.setOutputRange(min, max);
-
-
-                pidR = new PController(0.5);
-                pidR.setInputRange(0, 1000);
-                pidR.setSetPoint(target);
-                pidR.setOutputRange(min, max);
-
-                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-                if (armMotorR.getCurrentPosition() < target) {
-                    armMotorL.setPower(powerL);
-                    armMotorR.setPower(powerR);
-                    telemetry.addLine("INDO");
-
-                }else {
-                    armMotorL.setPower(powerL2);
-                    armMotorR.setPower(powerR2);
-                    telemetry.addLine("SEGURANDO");
-
-                }
-            }
-            else if(gamepad2.dpad_down) {
-                telemetry.addLine("Posição baixo");
-
-                int target = 0;
-
-                pidL = new PController(0.5);
-                pidL.setInputRange(0, 600);
-                pidL.setSetPoint(0);
-                pidL.setOutputRange(min, max);
+            pidL = new PController(1);
+            pidL.setInputRange(0, 600);
+            pidL.setSetPoint(armMotorL.getCurrentPosition());
+            pidL.setOutputRange(min, max);
 
 
-                pidR = new PController(0.5);
-                pidR.setInputRange(0, 1000);
-                pidR.setSetPoint(target);
-                pidR.setOutputRange(min, max);
+            pidR = new PController(1);
+            pidR.setInputRange(0, 1000);
+            pidR.setSetPoint(armMotorR.getCurrentPosition());
+            pidR.setOutputRange(min, max);
 
-                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
+            powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
+            powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
+            double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
+            double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                if (armMotorR.getCurrentPosition() > target) {
-                    armMotorL.setPower(powerL);
-                    armMotorR.setPower(powerR);
-                    telemetry.addLine("0");
+            armMotorL.setPower(powerL2);
+            armMotorR.setPower(powerR2);
+            telemetry.addLine("SEGURANDO");
 
-                }else {
-                    armMotorL.setPower(powerL2);
-                    armMotorR.setPower(powerR2);
-                    telemetry.addLine("SEGURANDO");
-                }
-            }
+        }
 
         telemetry.addData("Posição Left: ", armMotorL.getCurrentPosition());
         telemetry.addData("Posição Right: ", armMotorR.getCurrentPosition());
