@@ -119,9 +119,7 @@ public class TeleOp_teste extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double joystickInput = gamepad2.left_stick_y;
-        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double joystickInput = gamepad2.right_stick_y;
 
         /*
         armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -151,18 +149,26 @@ public class TeleOp_teste extends OpMode {
          */
 
         if (joystickInput > 0) {
-            armMotorL.setPower(0.6);
-            armMotorR.setPower(0.6);
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setPower(joystickInput);
+            armMotorR.setPower(joystickInput);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (joystickInput < 0) {
-            armMotorL.setPower(-0.6);
-            armMotorR.setPower(-0.6);
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setPower(-joystickInput);
+            armMotorR.setPower(-joystickInput);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
-        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
+        else if (!modeBase) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            // O operador ! (negação) verifica se holdingPosition é false
             armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
             armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotorL.setPower(1);
