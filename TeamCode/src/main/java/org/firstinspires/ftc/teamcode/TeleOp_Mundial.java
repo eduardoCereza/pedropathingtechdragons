@@ -94,13 +94,13 @@ public class TeleOp_Mundial extends OpMode {
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
         // Se o joystick for movido para cima e a posição for menor que 0, move o motor
-        if (joystickInput > 0 && current < 0) {
+        if (joystickInput > 0 /*&& current < 0*/) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0 && current > limit+10) {
+        else if (joystickInput < 0 /*&& current > limit+10*/) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
@@ -123,39 +123,41 @@ public class TeleOp_Mundial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
-        double joystickInput = gamepad2.right_stick_y;
         double min = 0.05;
         double max = 0.5;
+
+        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        telemetry.addLine("Posição baixo");
+
+        pidL = new PController(1);
+        pidL.setInputRange(0, 600);
+        pidL.setSetPoint(armMotorL.getCurrentPosition());
+        pidL.setOutputRange(min, max);
+
+        pidR = new PController(1);
+        pidR.setInputRange(0, 1000);
+        pidR.setSetPoint(armMotorR.getCurrentPosition());
+        pidR.setOutputRange(min, max);
+
+
+        powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
+        powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
+
+        double joystickInput = gamepad2.right_stick_y;
+
         if (joystickInput > 0) {
-            armMotorL.setPower(joystickInput/2);
-            armMotorR.setPower(joystickInput/2);
+            armMotorL.setPower(powerL);
+            armMotorR.setPower(powerR);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (joystickInput < 0) {
-            armMotorL.setPower(joystickInput/2);
-            armMotorR.setPower(joystickInput/2);
+            armMotorL.setPower(powerL);
+            armMotorR.setPower(powerR);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         else if (!modeBase) {
-
-            armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            telemetry.addLine("Posição baixo");
-
-            pidL = new PController(1);
-            pidL.setInputRange(0, 600);
-            pidL.setSetPoint(armMotorL.getCurrentPosition());
-            pidL.setOutputRange(min, max);
-
-
-            pidR = new PController(1);
-            pidR.setInputRange(0, 1000);
-            pidR.setSetPoint(armMotorR.getCurrentPosition());
-            pidR.setOutputRange(min, max);
-
-            powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-            powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
             double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
             double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());

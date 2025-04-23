@@ -121,33 +121,6 @@ public class TeleOp_teste extends OpMode {
 
         double joystickInput = gamepad2.right_stick_y;
 
-        /*
-        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        double min = 0.05;
-        double max = 0.5;
-        pidL = new PController(0.5);
-        pidL.setInputRange(0, 1000);
-        pidL.setSetPoint(targetL);
-        pidL.setOutputRange(min, max);
-
-        pidR = new PController(0.5);
-        pidR.setInputRange(0, 1000);
-        pidR.setSetPoint(targetR);
-        pidR.setOutputRange(min, max);
-
-        powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-        powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-        double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
-        double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
-
-        telemetry.addData("Posição Left: ", armMotorL.getCurrentPosition());
-        telemetry.addData("Posição Right: ", armMotorR.getCurrentPosition());
-
-         */
-
         if (joystickInput > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -165,6 +138,10 @@ public class TeleOp_teste extends OpMode {
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
         else if (!modeBase) {
+
+            armMotorL.setPower(0);
+            armMotorR.setPower(0);
+
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
