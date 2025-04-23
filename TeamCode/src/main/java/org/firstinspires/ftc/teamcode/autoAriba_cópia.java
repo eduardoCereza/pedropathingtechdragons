@@ -203,8 +203,7 @@ public class autoAriba_cópia extends OpMode {
             case 0:
 
                 //inicia a trajetória
-                recuar(1700);
-
+                clipPos();
                 //troca para fazer nada
 
 
