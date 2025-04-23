@@ -49,9 +49,10 @@ public class TeleOp_teste extends OpMode {
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        
+
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
 
     }
 
@@ -118,17 +119,22 @@ public class TeleOp_teste extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
+        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             double min = 0.05;
             double max = 0.5;
 
             if(gamepad2.dpad_up) {
-                targetR = 600;
-                targetL = 600;
+                targetR = 326;
+                targetL = 289;
+                telemetry.addLine("Posição cima");
             }
 
             else if(gamepad2.dpad_down) {
                 targetR = 0;
                 targetL = 0;
+                telemetry.addLine("Posição baixo");
             }
 
                 pidL = new PController(0.5);
@@ -147,12 +153,16 @@ public class TeleOp_teste extends OpMode {
                 double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
                 double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                if (armMotorR.getCurrentPosition() < targetR) {
+                if (armMotorR.getCurrentPosition() > targetR) {
                     armMotorL.setPower(powerL);
                     armMotorR.setPower(powerR);
+                    telemetry.addLine("0");
+
                 }else {
                     armMotorL.setPower(powerL2);
                     armMotorR.setPower(powerR2);
+                    telemetry.addLine("SEGURANDO");
+
                 }
 
 

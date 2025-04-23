@@ -127,12 +127,18 @@ public class TeleOp_Mundial extends OpMode {
             double min = 0.05;
             double max = 0.5;
 
+        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
             if(gamepad2.dpad_up) {
-                int target = 600;
+                telemetry.addLine("Posição cima");
+
+                int target = 326;
+                int targetL = 289;
 
                 pidL = new PController(0.5);
                 pidL.setInputRange(0, 600);
-                pidL.setSetPoint(600);
+                pidL.setSetPoint(targetL);
                 pidL.setOutputRange(min, max);
 
 
@@ -150,12 +156,18 @@ public class TeleOp_Mundial extends OpMode {
                 if (armMotorR.getCurrentPosition() < target) {
                     armMotorL.setPower(powerL);
                     armMotorR.setPower(powerR);
+                    telemetry.addLine("INDO");
+
                 }else {
                     armMotorL.setPower(powerL2);
                     armMotorR.setPower(powerR2);
+                    telemetry.addLine("SEGURANDO");
+
                 }
             }
             else if(gamepad2.dpad_down) {
+                telemetry.addLine("Posição baixo");
+
                 int target = 0;
 
                 pidL = new PController(0.5);
@@ -175,12 +187,16 @@ public class TeleOp_Mundial extends OpMode {
                 double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
                 double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                if (armMotorR.getCurrentPosition() < target) {
+                if (armMotorR.getCurrentPosition() > target) {
                     armMotorL.setPower(powerL);
                     armMotorR.setPower(powerR);
+                    telemetry.addLine("0");
+
                 }else {
                     armMotorL.setPower(powerL2);
                     armMotorR.setPower(powerR2);
+                    telemetry.addLine("SEGURANDO");
+
                 }
             }
 
