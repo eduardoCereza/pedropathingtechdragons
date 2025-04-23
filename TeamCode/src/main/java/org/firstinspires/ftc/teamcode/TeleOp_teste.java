@@ -119,29 +119,25 @@ public class TeleOp_teste extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double joystickInput = gamepad2.right_stick_y;
+        double joystickInput = gamepad2.right_stick_y; // invertido
 
-        if (joystickInput > 0) {
+        if (joystickInput < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(joystickInput/2);
-            armMotorR.setPower(joystickInput/2);
+            armMotorL.setPower(0.5);
+            armMotorR.setPower(0.5);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0) {
+        else if (joystickInput > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(joystickInput/2);
-            armMotorR.setPower(joystickInput/2);
+            armMotorL.setPower(-0.3);
+            armMotorR.setPower(-0.3);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
         else if (!modeBase) {
-
-            armMotorL.setPower(0);
-            armMotorR.setPower(0);
-
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -155,8 +151,8 @@ public class TeleOp_teste extends OpMode {
             armMotorR.setPower(1);
             modeBase = true;
         }
-
     }
+
 
     //Todo: Mover servo
     public void moveServo(){
