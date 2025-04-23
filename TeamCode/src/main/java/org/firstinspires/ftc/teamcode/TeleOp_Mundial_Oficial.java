@@ -41,6 +41,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo2.setDirection(Servo.Direction.REVERSE);
         garra = hardwareMap.get(Servo.class, "garra");
 
         armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
@@ -144,8 +145,8 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         else if (joystickInput > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.3);
-            armMotorR.setPower(-0.3);
+            armMotorL.setPower(-0.1);
+            armMotorR.setPower(-0.1);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
@@ -163,6 +164,11 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             armMotorR.setPower(1);
             modeBase = true;
         }
+
+        if(gamepad2.dpad_up){
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
 
 
@@ -170,16 +176,16 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveServo(){
 
         if(gamepad2.a){
-            servo1.setPosition(1);
-            servo2.setPosition(0);
+            servo1.setPosition(0.85);
+            servo2.setPosition(0.85);
             telemetry.addLine("Pick");
         }else if(gamepad2.y){
             servo1.setPosition(0);
-            servo2.setPosition(1);
+            servo2.setPosition(0);
             telemetry.addLine("Clip");
         }else if(gamepad2.b){
-            servo1.setPosition(0.6);
-            servo2.setPosition(0.4);
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
             telemetry.addLine("90");
         }
 
