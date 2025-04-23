@@ -119,52 +119,59 @@ public class TeleOp_teste extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        double joystickInput = gamepad2.left_stick_y;
         armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            double min = 0.05;
-            double max = 0.5;
+        /*
+        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-            if(gamepad2.dpad_up) {
-                targetR = 326;
-                targetL = 289;
-                telemetry.addLine("Posição cima");
-            }
+        double min = 0.05;
+        double max = 0.5;
+        pidL = new PController(0.5);
+        pidL.setInputRange(0, 1000);
+        pidL.setSetPoint(targetL);
+        pidL.setOutputRange(min, max);
 
-            else if(gamepad2.dpad_down) {
-                targetR = 0;
-                targetL = 0;
-                telemetry.addLine("Posição baixo");
-            }
+        pidR = new PController(0.5);
+        pidR.setInputRange(0, 1000);
+        pidR.setSetPoint(targetR);
+        pidR.setOutputRange(min, max);
 
-                pidL = new PController(0.5);
-                pidL.setInputRange(0, 1000);
-                pidL.setSetPoint(targetL);
-                pidL.setOutputRange(min, max);
+        powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
+        powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                pidR = new PController(0.5);
-                pidR.setInputRange(0, 1000);
-                pidR.setSetPoint(targetR);
-                pidR.setOutputRange(min, max);
+        double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
+        double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
 
-                powerL = min + pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                powerR = min + pidR.getComputedOutput(armMotorR.getCurrentPosition());
+        telemetry.addData("Posição Left: ", armMotorL.getCurrentPosition());
+        telemetry.addData("Posição Right: ", armMotorR.getCurrentPosition());
 
-                double powerL2 = min - pidL.getComputedOutput(armMotorL.getCurrentPosition());
-                double powerR2 = min - pidR.getComputedOutput(armMotorR.getCurrentPosition());
+         */
 
-                if (armMotorR.getCurrentPosition() > targetR) {
-                    armMotorL.setPower(powerL);
-                    armMotorR.setPower(powerR);
-                    telemetry.addLine("0");
+        if (joystickInput > 0) {
+            armMotorL.setPower(0.6);
+            armMotorR.setPower(0.6);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
+        else if (joystickInput < 0) {
+            armMotorL.setPower(-0.6);
+            armMotorR.setPower(-0.6);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
+        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
+            armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotorL.setPower(1);
 
-                }else {
-                    armMotorL.setPower(powerL2);
-                    armMotorR.setPower(powerR2);
-                    telemetry.addLine("SEGURANDO");
-
-                }
-
+            armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotorR.setPower(1);
+            modeBase = true;
+        }
 
     }
 

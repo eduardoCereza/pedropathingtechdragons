@@ -127,8 +127,8 @@ public class TeleOp_Mundial extends OpMode {
             double min = 0.05;
             double max = 0.5;
 
-        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armMotorL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
             if(gamepad2.dpad_up) {
                 telemetry.addLine("Posição cima");
@@ -196,10 +196,11 @@ public class TeleOp_Mundial extends OpMode {
                     armMotorL.setPower(powerL2);
                     armMotorR.setPower(powerR2);
                     telemetry.addLine("SEGURANDO");
-
                 }
             }
 
+        telemetry.addData("Posição Left: ", armMotorL.getCurrentPosition());
+        telemetry.addData("Posição Right: ", armMotorR.getCurrentPosition());
     }
 
     //Todo: Mover servo
