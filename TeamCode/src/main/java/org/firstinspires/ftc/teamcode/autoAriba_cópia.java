@@ -222,8 +222,7 @@ public class autoAriba_cópia extends OpMode {
             case 0:
 
                 //inicia a trajetória
-                subir(250);
-                //troca para fazer nada
+                // troca para fazer nada
 
 
         }
