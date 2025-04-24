@@ -31,7 +31,7 @@ public class TeleOp_teste extends OpMode {
     private final Pose startPose = new Pose(0, 0, 0);
     PController pidL, pidR;
 
-    int targetR, targetL;
+    int estado;
 
     @Override
     public void init() {
@@ -118,38 +118,16 @@ public class TeleOp_teste extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
+        double j = gamepad2.right_stick_y;
 
-        double joystickInput = gamepad2.right_stick_y; // invertido
-
-        if (joystickInput < 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(0.5);
-            armMotorR.setPower(0.5);
-            modeBase = false; // O motor está se movendo, então não está segurando posição
+        if(j > 0 || j < 0 ){
+            estado = 1;
+        }else if(j == 0){
+            estado = 2;
         }
-        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput > 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.3);
-            armMotorR.setPower(-0.3);
-            modeBase = false; // O motor está se movendo, então não está segurando posição
-        }
-        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
-        else if (!modeBase) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            // O operador ! (negação) verifica se holdingPosition é false
-            armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorL.setPower(1);
-
-            armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorR.setPower(1);
-            modeBase = true;
+        if(estado == 1){
+            double currentPos
         }
     }
 
