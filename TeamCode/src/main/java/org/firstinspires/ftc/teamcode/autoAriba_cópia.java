@@ -55,14 +55,35 @@ public class autoAriba_cópia extends OpMode {
     public void subir(int target){
 
         while (Left.getCurrentPosition() <= -target && Right.getCurrentPosition() <= target){
-            Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            PController controllerR, controllerL;
 
-            Left.setTargetPosition(-target);
-            Right.setTargetPosition(target);
+            double minPower = 0.01;
+            double maxPower = 0.5;
+            controllerR = new PController(1);
+            controllerR.setInputRange(0, 700);
+            controllerR.setSetPoint(450);
+            controllerR.setOutputRange(minPower, maxPower);
 
-            Left.setPower(-1);
-            Right.setPower(1);
+            controllerL = new PController(1);
+            controllerL.setInputRange(0, 700);
+            controllerL.setSetPoint(450);
+            controllerL.setOutputRange(minPower, maxPower);
+
+            double powerL = minPower + controllerL.getComputedOutput(Left.getCurrentPosition());
+            double powerR = minPower + controllerR.getComputedOutput(Right.getCurrentPosition());
+
+            double powerLD = minPower - controllerL.getComputedOutput(Left.getCurrentPosition());
+            double powerRD = minPower - controllerR.getComputedOutput(Right.getCurrentPosition());
+
+            Left.setTargetPosition(Left.getCurrentPosition());
+            Right.setTargetPosition(Right.getCurrentPosition());
+
+            if (Right.getCurrentPosition() < target) {
+                Left.setPower(powerL);
+                Right.setPower(powerR);
+            }else{
+                Left.setPower(powerLD);
+                Right.setPower(powerRD);            }
         }
     }
     public void descer(int target){
