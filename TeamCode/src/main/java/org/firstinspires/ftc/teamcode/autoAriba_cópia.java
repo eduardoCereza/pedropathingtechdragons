@@ -19,19 +19,21 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Ariba mexico", group = "auto mundial cópia")
+@Autonomous(name = "Ariba mexico mundial oficial")
 public class autoAriba_cópia extends OpMode {
 
+    //left =
+    //right =
     public void clipPos(){
-        leftS.setPosition(0.0);
-        rightS.setPosition(1.0);
+        leftS.setPosition(1.0);
+        rightS.setPosition(0.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(1.0);
-        rightS.setPosition(0.0);
+        leftS.setPosition(0.0);
+        rightS.setPosition(1.0);
         clippos = 0;
         pickpos = 1;
         specimenpickpos = 0;
@@ -85,6 +87,8 @@ public class autoAriba_cópia extends OpMode {
                 Left.setPower(powerLD);
                 Right.setPower(powerRD);            }
         }
+        Left.setPower(0.0);
+        Right.setPower(0.0);
     }
     public void descer(int target){
 
@@ -97,6 +101,8 @@ public class autoAriba_cópia extends OpMode {
 
             Left.setPower(1);
             Right.setPower(-1);}
+        Left.setPower(0.0);
+        Right.setPower(0.0);
     }
     public void hold(){
 
@@ -127,8 +133,10 @@ public class autoAriba_cópia extends OpMode {
             slide.setTargetPosition(-target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(-1.0);
+            holdSlide = 0;
         }
         slide.setPower(0.0);
+        holdSlide = 1;
     }
     public void recuar(int target){
 
@@ -136,11 +144,22 @@ public class autoAriba_cópia extends OpMode {
             slide.setTargetPosition(target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(1.0);
+            holdSlide = 0;
         }
         slide.setPower(0.0);
+        holdSlide = 1;
+    }
+    public void stay(){
+        int currentPosition = slide.getCurrentPosition();
+
+        slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+        slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
     }
     int isopen;
     int  specimenpickpos, clippos, pickpos;
+    int holdSlide;
+    int holdArm;
     private DcMotorEx slide, Left, Right;
     private Servo garra; //servo da garra/ponta
     private Servo leftS, rightS;
@@ -224,8 +243,7 @@ public class autoAriba_cópia extends OpMode {
             case 0:
 
                 //inicia a trajetória
-                clipPos();
-                //troca para fazer nada
+                // troca para fazer nada
 
 
         }
@@ -241,31 +259,26 @@ public class autoAriba_cópia extends OpMode {
     @Override
     public void loop() {
 
-        if (follower.isBusy() && slide.getPower() < 0.3){
-            int currentPosition = slide.getCurrentPosition();
-
-            slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
-
+        //talvez precise mudar
+        if (holdSlide == 1){
+            stay();
         }
-        if (follower.isBusy() && Left.getPower() < 0.3 && Right.getPower() < 0.3){
-            hold();
-        }
+
+
         if (isopen == 0){
             garra.setPosition(0.0);
         }
         if (clippos == 1){
-            leftS.setPosition(0.0);
-            rightS.setPosition(1.0);
-        }
-        if (pickpos == 1){
             leftS.setPosition(1.0);
             rightS.setPosition(0.0);
         }
+        if (pickpos == 1){
+            leftS.setPosition(0.0);
+            rightS.setPosition(1.0);
+        }
         if (specimenpickpos == 1){
-            leftS.setPosition(0);
-            rightS.setPosition(0);
+            leftS.setPosition(0.4);
+            rightS.setPosition(0.6);
         }
 
         follower.update();
@@ -283,6 +296,7 @@ public class autoAriba_cópia extends OpMode {
     public void init() {
 
         isopen = 0;
+        holdSlide = 1;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         leftS = hardwareMap.get(Servo.class, "servo2");
