@@ -41,8 +41,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
-        servo2.setDirection(Servo.Direction.REVERSE);
         garra = hardwareMap.get(Servo.class, "garra");
+
+        servo1.setDirection(Servo.Direction.REVERSE);
 
         armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
@@ -157,11 +158,11 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             // O operador ! (negação) verifica se holdingPosition é false
             armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
             armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorL.setPower(1);
+            armMotorL.setPower(0.3);
 
             armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
             armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorR.setPower(1);
+            armMotorR.setPower(0.3);
             modeBase = true;
         }
 
@@ -176,8 +177,8 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveServo(){
 
         if(gamepad2.a){
-            servo1.setPosition(0.85);
-            servo2.setPosition(0.85);
+            servo1.setPosition(0.95);
+            servo2.setPosition(0.95);
             telemetry.addLine("Pick");
         }else if(gamepad2.y){
             servo1.setPosition(0);

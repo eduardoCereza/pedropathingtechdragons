@@ -25,9 +25,9 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado teste")
 public class TeleOp_teste extends OpMode {
 
-    double kP = 0.01;
-    double kI = 0.001;
-    double kD = 0.0005;
+    double kP = 1;
+    double kI = 0;
+    double kD = 0;
 
     double integralL = 0;
     double integralR = 0;
@@ -40,9 +40,9 @@ public class TeleOp_teste extends OpMode {
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
 
-    int estado, targetPosition;
+    int targetPosition;
 
-    long now, lastTime;
+    long lastTime;
 
     @Override
     public void init() {
@@ -58,10 +58,15 @@ public class TeleOp_teste extends OpMode {
         servo2 = hardwareMap.get(Servo.class, "servo2");
         garra = hardwareMap.get(Servo.class, "garra");
 
+        servo1.setDirection(Servo.Direction.REVERSE);
+
         armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -133,17 +138,11 @@ public class TeleOp_teste extends OpMode {
     public void armBase() {
         double j = gamepad2.right_stick_y;
 
-        if (j != 0) {
-            estado = 1;  // O joystick está sendo movido
-        } else {
-            estado = 2;  // O joystick está solto, deve segurar a posição
-        }
-
         // Parâmetros do PID
 
         long lastTime = System.nanoTime();
 
-        if (estado == 1) {
+        if (j > 0 || j < 0) {
             // Controle manual quando o joystick está sendo movido
             armMotorL.setPower(j);
             armMotorR.setPower(j);
@@ -152,7 +151,8 @@ public class TeleOp_teste extends OpMode {
             targetPosition = (int) ((armMotorL.getCurrentPosition() + armMotorR.getCurrentPosition()) / 2.0);
             integralL = 0;  // Zera o integral ao iniciar o movimento
             integralR = 0;
-        } else if (estado == 2) {
+            modeBase = false;
+        } else if (!modeBase) {
             // Controle PID para segurar a posição quando o joystick está solto
 
             long now = System.nanoTime();
@@ -182,6 +182,12 @@ public class TeleOp_teste extends OpMode {
             // Atualiza os erros para a próxima iteração
             lastErrorL = errorL;
             lastErrorR = errorR;
+            modeBase = true;
+        }
+
+        if(gamepad2.dpad_down){
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         // Atualiza o telemetria para debugar
@@ -196,16 +202,16 @@ public class TeleOp_teste extends OpMode {
     public void moveServo(){
 
         if(gamepad2.a){
-            servo1.setPosition(1);
-            servo2.setPosition(0);
+            servo1.setPosition(0.85);
+            servo2.setPosition(0.85);
             telemetry.addLine("Pick");
         }else if(gamepad2.y){
-            servo1.setPosition(0);
-            servo2.setPosition(1);
+            servo1.setPosition(0.0);
+            servo2.setPosition(0.0);
             telemetry.addLine("Clip");
         }else if(gamepad2.b){
-            servo1.setPosition(0.6);
-            servo2.setPosition(0.4);
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
             telemetry.addLine("90");
         }
 
