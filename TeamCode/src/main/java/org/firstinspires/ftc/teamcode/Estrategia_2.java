@@ -257,8 +257,8 @@ public class Estrategia_2 extends OpMode {
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
-        armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         pathTimer = new Timer();
         opmodeTimer = new Timer();
