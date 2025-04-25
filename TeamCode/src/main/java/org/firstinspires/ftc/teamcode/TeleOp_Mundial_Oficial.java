@@ -151,16 +151,13 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
         else if (!modeBase) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
             // O operador ! (negação) verifica se holdingPosition é false
             armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
             armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorL.setPower(1);
-
             armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
             armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            armMotorL.setPower(1);
             armMotorR.setPower(1);
             modeBase = true;
         }
