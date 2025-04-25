@@ -132,9 +132,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double joystickInput = gamepad2.right_stick_y; // invertido
+        double joystickInput = -gamepad2.right_stick_y; // invertido
 
-        if (joystickInput < 0) {
+        if (joystickInput > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorL.setPower(0.5);
@@ -142,7 +142,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput > 0) {
+        else if (joystickInput < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorL.setPower(-0.1);
@@ -151,10 +151,13 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
         else if (!modeBase) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             // O operador ! (negação) verifica se holdingPosition é false
             armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
+
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             armMotorL.setPower(1);
@@ -166,6 +169,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
+
+        telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
+        telemetry.addData("POS RIGHT: ", armMotorR.getCurrentPosition());
     }
 
 
