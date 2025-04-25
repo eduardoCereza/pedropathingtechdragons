@@ -184,11 +184,11 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //Todo: Mover servo
     public void moveServo(){
 
-        if(gamepad2.a){
+        if(gamepad2.y){
             servo1.setPosition(0.85);
             servo2.setPosition(0.85);
             telemetry.addLine("Pick");
-        }else if(gamepad2.y){
+        }else if(gamepad2.a){
             servo1.setPosition(0);
             servo2.setPosition(0);
             telemetry.addLine("Clip");
