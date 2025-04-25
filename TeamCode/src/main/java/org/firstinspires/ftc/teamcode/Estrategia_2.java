@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Ariba mexico", group = "Examples")
+@Autonomous(name = "Estratégia 2 - Mundial", group = "Examples")
 public class Estrategia_2 extends OpMode {
 
     public void clipPos(){
