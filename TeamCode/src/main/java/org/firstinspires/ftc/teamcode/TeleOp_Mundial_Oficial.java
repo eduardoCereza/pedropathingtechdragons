@@ -84,6 +84,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         moveSlide();
         armBase();
 
+        telemetry.addData("Pos Left: ", armMotorL.getCurrentPosition());
+        telemetry.addData("Pos Right: ", armMotorR.getCurrentPosition());
+
         /* Telemetry Outputs of our Follower */
         telemetry.addData("X", follower.getPose().getX());
         telemetry.addData("Y", follower.getPose().getY());
@@ -132,39 +135,40 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double joystickInput = -gamepad2.right_stick_y; // invertido
+        double j = -gamepad2.right_stick_y;
+        int currentL = armMotorL.getCurrentPosition();
+        int currentR = armMotorR.getCurrentPosition();
 
-        if (joystickInput > 0) {
+        // Se o joystick for movido para cima e a posição for menor que 0, move o motor
+        if (j > 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(0.4);
+            armMotorL.setPower(0.3);
+
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(0.4);
+            armMotorR.setPower(0.3);
+
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0) {
+        else if (j < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorL.setPower(-0.1);
+
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             armMotorR.setPower(-0.1);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
-        else if (!modeBase) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
+            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
 
-            armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorL.setPower(1);
-
-            armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
             armMotorR.setPower(1);
 
-
-
-            modeBase = true;
+            modeBase = true; // Marca que o motor está segurando a posição
         }
 
         if(gamepad2.dpad_up){
