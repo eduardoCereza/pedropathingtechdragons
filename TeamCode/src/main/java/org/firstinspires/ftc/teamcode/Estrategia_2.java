@@ -186,6 +186,7 @@ public class Estrategia_2 extends OpMode {
                 if(!follower.isBusy()){
                     //extender(-900);
                     //open();
+                    //closed();
                     //recuar(0);
 
                 }

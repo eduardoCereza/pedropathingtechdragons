@@ -21,8 +21,20 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  */
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial Oficial")
-public class TeleOp_Mundial_Oficial extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Teste Atuador")
+public class teste_atuado extends OpMode {
+
+
+    // Definir as variáveis para o controlador PIDF
+    double kP = 0.1, kI = 0.01, kD = 0.05, kF = 0.0;
+    double setPoint = 0; // Posição alvo (referência) ao soltar o analógico
+    double currentPosMotor1 = 0; // Posição do motor 1
+    double currentPosMotor2 = 0; // Posição do motor 2
+    double errorMotor1, errorMotor2;
+    double integralMotor1 = 0, integralMotor2 = 0;
+    double derivativeMotor1 = 0, derivativeMotor2 = 0;
+    double lastErrorMotor1 = 0, lastErrorMotor2 = 0;
+
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
     double powerR, powerL;
@@ -134,47 +146,32 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
-
-        double j = -gamepad2.right_stick_y;
-        int currentL = armMotorL.getCurrentPosition();
-        int currentR = armMotorR.getCurrentPosition();
-
-        // Se o joystick for movido para cima e a posição for menor que 0, move o motor
-        if (j > 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(0.3);
-
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(0.3);
-
-            modeBase = false; // O motor está se movendo, então não está segurando posição
-        }
-        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (j < 0) {
-            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.1);
-
-            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(-0.1);
-            modeBase = false; // O motor está se movendo, então não está segurando posição
-        }
-        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
-        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
-            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
-
-            armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            armMotorR.setPower(1);
-
-            modeBase = true; // Marca que o motor está segurando a posição
+        // Quando o analógico for solto, registra a posição dos motores
+        if (analógicoSolto) {
+            setPoint = (currentPosMotor1 + currentPosMotor2) / 2; // Média das posições
         }
 
-        if(gamepad2.dpad_up){
-            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
+        // Calcula os erros para ambos os motores
+        errorMotor1 = setPoint - currentPosMotor1;
+        errorMotor2 = setPoint - currentPosMotor2;
+
+        // Calcula os integrals e derivatives para ambos os motores
+        integralMotor1 += errorMotor1;
+        integralMotor2 += errorMotor2;
+        derivativeMotor1 = errorMotor1 - lastErrorMotor1;
+        derivativeMotor2 = errorMotor2 - lastErrorMotor2;
+
+    // Calcula os PIDF para ambos os motores
+        double outputMotor1 = kP * errorMotor1 + kI * integralMotor1 + kD * derivativeMotor1 + kF * (setPoint - currentPosMotor1);
+        double outputMotor2 = kP * errorMotor2 + kI * integralMotor2 + kD * derivativeMotor2 + kF * (setPoint - currentPosMotor2);
+
+    // Aplica a saída aos motores
+        armMotorR.setPower(outputMotor1);
+        armMotorL.setPower(outputMotor2);
+
+    // Atualiza os erros anteriores para o próximo ciclo
+        lastErrorMotor1 = errorMotor1;
+        lastErrorMotor2 = errorMotor2;
 
         telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
         telemetry.addData("POS RIGHT: ", armMotorR.getCurrentPosition());
