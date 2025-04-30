@@ -21,16 +21,15 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  */
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial Teste")
-public class teste_atuado extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial Oficial")
+public class TeleOp_Mundial_Oficial extends OpMode {
     private Follower follower;
     DcMotorEx slide, armMotorL, armMotorR;
-    int targetR, targetL;
+    double powerR, powerL;
     Servo servo1, servo2, garra;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
-    int estado;
-    PController pidL, pidR;
+    int targetR, targetL, estado;
 
     @Override
     public void init() {
@@ -53,8 +52,7 @@ public class teste_atuado extends OpMode {
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        pidL = new PController(1);
-        pidR = new PController(1);
+
     }
 
     @Override
@@ -85,6 +83,9 @@ public class teste_atuado extends OpMode {
         moveServo();
         moveSlide();
         armBase();
+
+        telemetry.addData("Pos Left: ", armMotorL.getCurrentPosition());
+        telemetry.addData("Pos Right: ", armMotorR.getCurrentPosition());
 
         /* Telemetry Outputs of our Follower */
         telemetry.addData("X", follower.getPose().getX());
@@ -135,39 +136,44 @@ public class teste_atuado extends OpMode {
     public void armBase() {
 
         double j = -gamepad2.right_stick_y;
+        int currentL = armMotorL.getCurrentPosition();
+        int currentR = armMotorR.getCurrentPosition();
 
-        if(gamepad2.dpad_up){
-            targetR = 806;
-            targetL  = 640;
-        } else if (gamepad2.dpad_down) {
-            targetR = 0;
-            targetL  = 0;
+        // Se o joystick for movido para cima e a posição for menor que 0, move o motor
+        if (j > 0) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setPower(0.3);
+
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(0.3);
+
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
+        else if (j < 0) {
+            armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorL.setPower(-0.1);
+
+            armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            armMotorR.setPower(-0.1);
+            modeBase = false; // O motor está se movendo, então não está segurando posição
+        }
+        // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
+        else if (!modeBase) { // O operador ! (negação) verifica se holdingPosition é false
+            armMotorL.setTargetPosition(currentL); // Define a posição atual como alvo
+            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
+
+            armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
+            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            armMotorR.setPower(1);
+
+            modeBase = true; // Marca que o motor está segurando a posição
         }
 
-        double min = 0.01, max = 0.5;
-        pidL.setInputRange(0, 1000);
-        pidL.setSetPoint(targetL);
-        pidL.setOutputRange(min, max);
-
-        pidR.setInputRange(0, 1000);
-        pidR.setSetPoint(targetR);
-        pidR.setOutputRange(min, max);
-
-        if(armMotorL.getCurrentPosition() < targetL || armMotorR.getCurrentPosition() < targetR){
-            armMotorR.setPower(min + pidR.getComputedOutput(
-                    armMotorR.getCurrentPosition()
-            ));
-            armMotorL.setPower(min + pidL.getComputedOutput(
-                    armMotorL.getCurrentPosition()
-            ));
-        }else{
-            armMotorR.setPower(min - pidR.getComputedOutput(
-                    armMotorR.getCurrentPosition()
-            ));
-            armMotorL.setPower(min - pidL.getComputedOutput(
-                    armMotorL.getCurrentPosition()
-            ));
-
+        if(gamepad2.dpad_up){
+            armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
         telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
@@ -178,11 +184,11 @@ public class teste_atuado extends OpMode {
     //Todo: Mover servo
     public void moveServo(){
 
-        if(gamepad2.a){
+        if(gamepad2.y){
             servo1.setPosition(0.85);
             servo2.setPosition(0.85);
             telemetry.addLine("Pick");
-        }else if(gamepad2.y){
+        }else if(gamepad2.a){
             servo1.setPosition(0);
             servo2.setPosition(0);
             telemetry.addLine("Clip");
