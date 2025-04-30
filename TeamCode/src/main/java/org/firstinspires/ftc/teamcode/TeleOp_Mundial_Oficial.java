@@ -70,7 +70,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         }
 
         if(estado == 1){
-            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Normal Chassi");
         }else if(estado ==2){
