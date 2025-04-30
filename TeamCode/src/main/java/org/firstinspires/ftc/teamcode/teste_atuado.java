@@ -24,15 +24,12 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Teste Atuador")
 public class teste_atuado extends OpMode {
 
-
-    // Definir as variáveis para o controlador PIDF
+    // Definir constantes do PIDF
     double kP = 0.1, kI = 0.01, kD = 0.05, kF = 0.0;
-    double setPoint = 0; // Posição alvo (referência) ao soltar o analógico
-    double currentPosMotor1 = 0; // Posição do motor 1
-    double currentPosMotor2 = 0; // Posição do motor 2
-    double errorMotor1, errorMotor2;
+
+    // Variáveis para controle
+    double setPoint = 0;
     double integralMotor1 = 0, integralMotor2 = 0;
-    double derivativeMotor1 = 0, derivativeMotor2 = 0;
     double lastErrorMotor1 = 0, lastErrorMotor2 = 0;
 
     private Follower follower;
@@ -146,8 +143,9 @@ public class teste_atuado extends OpMode {
 
     //TODO: Mover base do atuador
     public void armBase() {
+
         // Quando o analógico for solto, registra a posição dos motores
-        if (analógicoSolto) {
+        if (gamepad2.right_stick_y == 0) {
             setPoint = (currentPosMotor1 + currentPosMotor2) / 2; // Média das posições
         }
 
