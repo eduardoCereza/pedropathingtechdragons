@@ -129,8 +129,8 @@ public class Estrategia_2 extends OpMode {
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 70, Math.toRadians(180)); //posição inicial do robô
-    private final Pose move1 = new Pose(30, 113, Math.toRadians(180));
-    private final Pose move2 = new Pose(20, 125.5, Math.toRadians(180));
+    private final Pose move1 = new Pose(-10, 20, Math.toRadians(180));
+    private final Pose move2 = new Pose(-5, 20, Math.toRadians(180));
     private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(180));
     private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(180));
     private final Pose move5 = new Pose(31.220, 133.742, Math.toRadians(180));
@@ -148,7 +148,8 @@ public class Estrategia_2 extends OpMode {
 
                 //vai para trás
                 .addPath(new BezierLine(new Point(move1), new Point(move2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+        .build();
 
         traj2 = follower.pathBuilder()//vai para o segundo specimen amarelo
                 .addPath(new BezierLine(new Point(move2), new Point(move3)))
@@ -179,16 +180,18 @@ public class Estrategia_2 extends OpMode {
                 follower.followPath(traj1, true);
 
                 pathState = 1;
-                break;
+
 
             case 1:
                 if(!follower.isBusy()){
-                    extender(-900);
-                    recuar(0);
+                    //extender(-900);
+                    //open();
+                    //recuar(0);
 
                 }
                 follower.followPath(traj2, true);
                 pathState = 2;
+                /*
             case 2:
                 if(!follower.isBusy()){
 
@@ -200,7 +203,11 @@ public class Estrategia_2 extends OpMode {
 
                 }
                 follower.followPath(traj4, true);
+
+                 */
         }
+
+
     }
 
     //controle das trajetórias
