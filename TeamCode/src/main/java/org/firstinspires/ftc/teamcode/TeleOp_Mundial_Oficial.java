@@ -121,7 +121,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         else if (!holdingPosition) { // O operador ! (negação) verifica se holdingPosition é false
             slide.setTargetPosition(current); // Define a posição atual como alvo
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
+            slide.setPower(0.3); // Aplica uma pequena potência para segurar a posição
             holdingPosition = true; // Marca que o motor está segurando a posição
         }
 
