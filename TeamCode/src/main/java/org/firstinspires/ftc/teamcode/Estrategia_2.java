@@ -177,7 +177,7 @@ public class Estrategia_2 extends OpMode {
             //faz a trajetória
             case 0:
                 //inicia a trajetória
-                follower.followPath(traj1, true);
+                follower.followPath(traj1, 0.6,true);
 
                 pathState = 1;
 
