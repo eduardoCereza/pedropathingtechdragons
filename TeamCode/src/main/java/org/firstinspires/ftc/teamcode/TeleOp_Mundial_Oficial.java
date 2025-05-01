@@ -41,9 +41,8 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
+        servo2.setDirection(Servo.Direction.REVERSE);
         garra = hardwareMap.get(Servo.class, "garra");
-
-        servo1.setDirection(Servo.Direction.REVERSE);
 
         armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
@@ -71,11 +70,11 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         }
 
         if(estado == 1){
-            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, -gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Normal Chassi");
         }else if(estado ==2){
-            follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
+            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Inverso Chassi");
 
@@ -170,15 +169,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
             armMotorL.setPower(1); // Aplica uma pequena potência para segurar a posição
 
-            // O operador ! (negação) verifica se holdingPosition é false
-            armMotorL.setTargetPosition(armMotorL.getCurrentPosition());
-            armMotorL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorL.setPower(0.3);
-
-            armMotorR.setTargetPosition(armMotorR.getCurrentPosition());
-            armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotorR.setPower(0.3);
-            modeBase = true;
             armMotorR.setTargetPosition(currentR); // Define a posição atual como alvo
             armMotorR.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
             armMotorR.setPower(1);
@@ -197,29 +187,26 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
 
     //Todo: Mover servo
-    public void moveServo() {
+    public void moveServo(){
 
-        if (gamepad2.a) {
-            servo1.setPosition(0.95);
-            servo2.setPosition(0.95);
-            if (gamepad2.y) {
-                servo1.setPosition(0.85);
-                servo2.setPosition(0.85);
-                telemetry.addLine("Pick");
-            } else if (gamepad2.a) {
-                servo1.setPosition(0);
-                servo2.setPosition(0);
-                telemetry.addLine("Clip");
-            } else if (gamepad2.b) {
-                servo1.setPosition(0.5);
-                servo2.setPosition(0.5);
-                telemetry.addLine("90");
-            }
+        if(gamepad2.y){
+            servo1.setPosition(0.85);
+            servo2.setPosition(0.85);
+            telemetry.addLine("Pick");
+        }else if(gamepad2.a){
+            servo1.setPosition(0);
+            servo2.setPosition(0);
+            telemetry.addLine("Clip");
+        }else if(gamepad2.b){
+            servo1.setPosition(0.5);
+            servo2.setPosition(0.5);
+            telemetry.addLine("90");
+        }
 
-            if (gamepad2.right_bumper) {
-                garra.setPosition(0.6);
-            } else {
-                garra.setPosition(0);
-            }
+        if(gamepad2.right_bumper){
+            garra.setPosition(0.6);
+        }else{
+            garra.setPosition(0);
         }
     }
+}

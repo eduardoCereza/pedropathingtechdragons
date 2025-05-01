@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
+import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
@@ -13,7 +14,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
@@ -24,15 +24,15 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class autoAriba extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(1.0);
-        rightS.setPosition(1.0);
+        leftS.setPosition(0.0);
+        rightS.setPosition(0.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(0.0);
-        rightS.setPosition(0.0);
+        leftS.setPosition(1.0);
+        rightS.setPosition(1.0);
         clippos = 0;
         pickpos = 1;
         specimenpickpos = 0;
@@ -60,8 +60,8 @@ public class autoAriba extends OpMode {
             Left.setTargetPosition(-target);
             Right.setTargetPosition(target);
 
-            Left.setPower(1);
-            Right.setPower(1);
+            Left.setPower(0.8);
+            Right.setPower(0.8);
             holdArm = 0;
         }
         Left.setPower(0.0);
@@ -87,9 +87,9 @@ public class autoAriba extends OpMode {
 
         PIDFController controller;
 
-        double minPower = 0.3;
+        double minPower = 0.4;
         double maxPower = 1.0;
-        controller = new PIDFController(10, 3, 4, 12);
+        controller = new PIDFController(12, 4, 5, 13);
         controller.setInputRange(-4000, 4000);
         controller.setOutputRange(minPower, maxPower);
 
@@ -136,6 +136,7 @@ public class autoAriba extends OpMode {
         slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
     }
     int isopen;
+    int num;
     int  specimenpickpos, clippos, pickpos;
     int holdSlide;
     int holdArm;
@@ -149,19 +150,18 @@ public class autoAriba extends OpMode {
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 71, Math.toRadians(180)); //posição inicial do robô
-    private final Pose ClipPose = new Pose(24, 71, Math.toRadians(180));
-    private final Pose move1 = new Pose(10, 71, Math.toRadians(180)); //após clipar vai para a direita
-    private final Pose move2 = new Pose(50, 30, Math.toRadians(180)); //vai para frente
-    private final Pose move3 = new Pose(50, 15, Math.toRadians(180));// vai para direita na frente do primeiro sample
-    private final Pose move4 = new Pose(5, 15, Math.toRadians(180)); //empurra o sample para o jogador humano
-    private final Pose move5 = new Pose(50, 15, Math.toRadians(180)); //vai para frente
-    private final Pose move6 = new Pose(50,-10, Math.toRadians(180));// vai para a direita na frente do segundo sample
-    private final Pose move7 = new Pose(5, -10, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
+    private final Pose ClipPose = new Pose(24.3, 71, Math.toRadians(180));
+    private final Pose Control1 = new Pose(6, 20, Math.toRadians(180));
+    private final Pose move2 = new Pose(45, 33, Math.toRadians(180)); //vai para frente
+    private final Pose move3 = new Pose(45, 15, Math.toRadians(180));
+    private final Pose move4 = new Pose(6, 15, Math.toRadians(180)); //empurra o sample para o jogador humano
+    private final Pose move5 = new Pose(45,-5, Math.toRadians(180));// vai para a direita na frente do segundo sample
+    private final Pose move6 = new Pose(6, -5, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
     private final Pose move8 = new Pose(50, -10, Math.toRadians(180)); //foi para frente
     private final Pose move9 = new Pose(50, -30, Math.toRadians(180)); //foi para a direita na frente do terceiro sample
     private final Pose move10 = new Pose(5, -30, Math.toRadians(180)); //empurrou o terceiro sample para a area do jogador humano
     private final Pose move11 = new Pose(30, -30, Math.toRadians(180)); // voltou para frente
-    private PathChain traj1, traj2; //conjunto de trajetórias
+    private PathChain traj1, traj2, traj3; //conjunto de trajetórias
 
     public void buildPaths() {
 
@@ -172,7 +172,22 @@ public class autoAriba extends OpMode {
                 .build();
 
         traj2 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(ClipPose), new Point(move1)))
+                .addPath(new BezierCurve(new Point(ClipPose), new Point(Control1), new Point(move2)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move2), new Point(move3)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move3), new Point(move4)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move4), new Point(move3)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move3), new Point(move5)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move5), new Point(move6)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        traj3 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(move6), new Point(ClipPose)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
     }
@@ -181,25 +196,41 @@ public class autoAriba extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                subir(500);
+                subir(390);
                 extender(-700);
-                follower.followPath(traj1, true);
-
-                if (!follower.isBusy()) {
-                    recuar(-300);
-                    pathState++; // avança para o próximo estado
-                }
+                closed();
+                follower.followPath(traj1, 0.5, true);
+                setPathState(1);
                 break;
 
             case 1:
-                follower.followPath(traj2, true);
-
-                if (!follower.isBusy()) {
-                    pathState++; // avança para o próximo estado se quiser continuar
+                if (!follower.isBusy() && pathState == 1){
+                    extender(-1900);
+                    open();
+                    num = 1;
+                }
+                if (num == 1){
+                    //mudar
+                    recuar(-250);
+                    descer(0);
+                    follower.followPath(traj2, 0.95, false);
+                    setPathState(2);
                 }
                 break;
+            case 2:
+                if (!follower.isBusy() && pathState ==2){
+                    specimenPickpos();
+                    closed();
+                    clipPos();
+                    follower.followPath(traj3, 1.0, true);
+                    setPathState(3);
+                }
+                break;
+            case 3:
+                break;
 
-            // Adicione mais cases se necessário para continuar a rotina
+
+
         }
     }
 
@@ -233,16 +264,16 @@ public class autoAriba extends OpMode {
             hold();
         }
 
-        //if (isopen == 0){
-            //garra.setPosition(0.0);
-        //}
-        if (clippos == 1){
-            leftS.setPosition(1.0);
-            rightS.setPosition(1.0);
+        if (isopen == 0){
+            garra.setPosition(0);
         }
-        if (pickpos == 1){
+        if (clippos == 1){
             leftS.setPosition(0.0);
             rightS.setPosition(0.0);
+        }
+        if (pickpos == 1){
+            leftS.setPosition(1.0);
+            rightS.setPosition(1.0);
         }
         if (specimenpickpos == 1){
             leftS.setPosition(0.5);
@@ -262,7 +293,7 @@ public class autoAriba extends OpMode {
 
         holdArm = 1;
 
-        //isopen = 0;
+        isopen = 0;
 
         clippos = 1;
         pickpos = 0;
@@ -271,7 +302,7 @@ public class autoAriba extends OpMode {
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         leftS = hardwareMap.get(Servo.class, "servo2");
         rightS = hardwareMap.get(Servo.class, "servo1");
-        //garra = hardwareMap.get(Servo.class, "garra");
+        garra = hardwareMap.get(Servo.class, "garra");
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
@@ -287,7 +318,10 @@ public class autoAriba extends OpMode {
         Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        //garra.setPosition(0.0);
+        garra.setPosition(0);
+
+        rightS.setPosition(0);
+        leftS.setPosition(0);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -313,7 +347,10 @@ public class autoAriba extends OpMode {
     public void stop() {
         holdArm = 0;
         holdSlide = 0;
-        //isopen = 0;
+        isopen = 1;
+        clippos = 0;
+        pickpos = 0;
+        specimenpickpos = 0;
 
 
 
