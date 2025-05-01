@@ -161,7 +161,7 @@ public class autoAriba extends OpMode {
     private final Pose move9 = new Pose(50, -30, Math.toRadians(180)); //foi para a direita na frente do terceiro sample
     private final Pose move10 = new Pose(5, -30, Math.toRadians(180)); //empurrou o terceiro sample para a area do jogador humano
     private final Pose move11 = new Pose(30, -30, Math.toRadians(180)); // voltou para frente
-    private PathChain traj1, traj2, traj3; //conjunto de trajetórias
+    private PathChain traj1, traj2, traj3, traj4; //conjunto de trajetórias
 
     public void buildPaths() {
 
@@ -180,13 +180,16 @@ public class autoAriba extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(new BezierLine(new Point(move4), new Point(move3)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        traj3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move3), new Point(move5)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .addPath(new BezierLine(new Point(move5), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        traj3 = follower.pathBuilder()
+        traj4 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move6), new Point(ClipPose)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
@@ -219,14 +222,18 @@ public class autoAriba extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy() && pathState ==2){
-                    specimenPickpos();
-                    closed();
-                    clipPos();
                     follower.followPath(traj3, 1.0, true);
                     setPathState(3);
                 }
                 break;
             case 3:
+                if(!follower.isBusy() && pathState == 3){
+                    specimenPickpos();
+                    closed();
+                    clipPos();
+                    follower.followPath(traj4, 1.0, true);
+
+                }
                 break;
 
 

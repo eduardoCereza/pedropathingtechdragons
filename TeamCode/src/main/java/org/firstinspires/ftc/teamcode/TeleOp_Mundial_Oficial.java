@@ -38,6 +38,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
@@ -100,7 +101,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveSlide() {
 
         int current = slide.getCurrentPosition();
-        int limit = -3500;
+        int limit = -1000;
 
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
@@ -111,7 +112,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0 && current > limit+10) {
+        else if (joystickInput < 0 && current > limit) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
@@ -152,10 +153,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (j < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.2);
+            armMotorL.setPower(-0.1);
 
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(-0.2);
+            armMotorR.setPower(-0.1);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
