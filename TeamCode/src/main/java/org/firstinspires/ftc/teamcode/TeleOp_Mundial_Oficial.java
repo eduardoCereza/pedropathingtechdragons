@@ -7,6 +7,7 @@ import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
@@ -50,6 +51,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        armMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
+
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -75,7 +79,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             follower.update();
             telemetry.addLine("Normal Chassi");
         }else if(estado ==2){
-            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Inverso Chassi");
 
@@ -101,7 +105,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveSlide() {
 
         int current = slide.getCurrentPosition();
-        int limit = -1000;
+        int limit = -2990;
 
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
@@ -136,7 +140,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double j = -gamepad2.right_stick_y;
+        double j = gamepad2.right_stick_y;
         int currentL = armMotorL.getCurrentPosition();
         int currentR = armMotorR.getCurrentPosition();
 

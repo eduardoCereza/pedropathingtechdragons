@@ -20,19 +20,19 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Ariba mexico mundial oficial")
-public class autoAriba extends OpMode {
+@Autonomous(name = "Cesta México Oficial")
+public class AutoAribaCesta extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(0.0);
-        rightS.setPosition(0.0);
+        leftS.setPosition(1.0);
+        rightS.setPosition(1.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(1.0);
-        rightS.setPosition(1.0);
+        leftS.setPosition(0.0);
+        rightS.setPosition(0.0);
         clippos = 0;
         pickpos = 1;
         specimenpickpos = 0;
@@ -50,18 +50,18 @@ public class autoAriba extends OpMode {
         isopen = 0;
     }
     public void open(){
-        garra.setPosition(0.6);
+        garra.setPosition(0.5);
         isopen = 1;
     }
     public void subir(int target){
 
-        while (Right.getCurrentPosition() <= target){
+        while (Right.getCurrentPosition() >= target){
 
             Left.setTargetPosition(-target);
             Right.setTargetPosition(target);
 
-            Left.setPower(0.8);
-            Right.setPower(0.8);
+            Left.setPower(0.5);
+            Right.setPower(0.5);
             holdArm = 0;
         }
         Left.setPower(0.0);
@@ -70,7 +70,7 @@ public class autoAriba extends OpMode {
     }
     public void descer(int target){
 
-        while (Right.getCurrentPosition() >= target){
+        while (Right.getCurrentPosition() <= target){
 
             Left.setTargetPosition(target);
             Right.setTargetPosition(-target);
@@ -150,94 +150,19 @@ public class autoAriba extends OpMode {
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 71, Math.toRadians(180)); //posição inicial do robô
-    private final Pose ClipPose = new Pose(24.3, 71, Math.toRadians(180));
-    private final Pose Control1 = new Pose(6, 20, Math.toRadians(180));
-    private final Pose move2 = new Pose(45, 33, Math.toRadians(180)); //vai para frente
-    private final Pose move3 = new Pose(45, 15, Math.toRadians(180));
-    private final Pose move4 = new Pose(6, 15, Math.toRadians(180)); //empurra o sample para o jogador humano
-    private final Pose move5 = new Pose(45,-5, Math.toRadians(180));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(6, -5, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
-    private final Pose move8 = new Pose(50, -10, Math.toRadians(180)); //foi para frente
-    private final Pose move9 = new Pose(50, -30, Math.toRadians(180)); //foi para a direita na frente do terceiro sample
-    private final Pose move10 = new Pose(5, -30, Math.toRadians(180)); //empurrou o terceiro sample para a area do jogador humano
-    private final Pose move11 = new Pose(30, -30, Math.toRadians(180)); // voltou para frente
-    private PathChain traj1, traj2, traj3, traj4; //conjunto de trajetórias
+    private PathChain traj1; //conjunto de trajetórias
 
     public void buildPaths() {
-
         traj1 = follower.pathBuilder()
-                //vai para frente para clipar
-                .addPath(new BezierLine(new Point(startPose), new Point(ClipPose)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
-        traj2 = follower.pathBuilder()
-                .addPath(new BezierCurve(new Point(ClipPose), new Point(Control1), new Point(move2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(move2), new Point(move3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(move3), new Point(move4)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(move4), new Point(move3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
-
-        traj3 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(move3), new Point(move5)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .addPath(new BezierLine(new Point(move5), new Point(move6)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
-
-        traj4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(move6), new Point(ClipPose)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
-                .build();
     }
 
     //dependendo de como funcionar a movimentação do atuador, esses cases vão precisar ser dividos e dividir as trajetórias neles, testar antes
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                subir(390);
-                extender(-700);
-                closed();
-                follower.followPath(traj1, 0.5, true);
-                setPathState(1);
                 break;
-
-            case 1:
-                if (!follower.isBusy() && pathState == 1){
-                    extender(-1900);
-                    open();
-                    num = 1;
-                }
-                if (num == 1){
-                    //mudar
-                    recuar(-250);
-                    descer(0);
-                    follower.followPath(traj2, 0.95, false);
-                    setPathState(2);
-                }
-                break;
-            case 2:
-                if (!follower.isBusy() && pathState ==2){
-                    follower.followPath(traj3, 1.0, true);
-                    setPathState(3);
-                }
-                break;
-            case 3:
-                if(!follower.isBusy() && pathState == 3){
-                    specimenPickpos();
-                    closed();
-                    clipPos();
-                    follower.followPath(traj4, 1.0, true);
-
-                }
-                break;
-
-
-
         }
     }
 
@@ -275,12 +200,12 @@ public class autoAriba extends OpMode {
             garra.setPosition(0);
         }
         if (clippos == 1){
-            leftS.setPosition(0.0);
-            rightS.setPosition(0.0);
-        }
-        if (pickpos == 1){
             leftS.setPosition(1.0);
             rightS.setPosition(1.0);
+        }
+        if (pickpos == 1){
+            leftS.setPosition(0.0);
+            rightS.setPosition(0.0);
         }
         if (specimenpickpos == 1){
             leftS.setPosition(0.5);
@@ -327,8 +252,8 @@ public class autoAriba extends OpMode {
 
         garra.setPosition(0);
 
-        rightS.setPosition(0);
-        leftS.setPosition(0);
+        rightS.setPosition(1.0);
+        leftS.setPosition(1.0);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -358,9 +283,5 @@ public class autoAriba extends OpMode {
         clippos = 0;
         pickpos = 0;
         specimenpickpos = 0;
-
-
-
     }
-
 }
