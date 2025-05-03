@@ -157,10 +157,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (j < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.1);
+            armMotorL.setPower(-0.2);
 
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(-0.1);
+            armMotorR.setPower(-0.2);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
