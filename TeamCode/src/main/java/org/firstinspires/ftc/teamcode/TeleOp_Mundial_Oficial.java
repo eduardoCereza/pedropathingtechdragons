@@ -7,6 +7,7 @@ import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
@@ -38,6 +39,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         follower.setStartingPose(startPose);
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
@@ -48,6 +50,9 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
         armMotorL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armMotorR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        armMotorR.setDirection(DcMotorSimple.Direction.REVERSE);
+        armMotorL.setDirection(DcMotorSimple.Direction.REVERSE);
 
         armMotorL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotorR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -74,7 +79,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             follower.update();
             telemetry.addLine("Normal Chassi");
         }else if(estado ==2){
-            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, true);
+            follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Inverso Chassi");
 
@@ -100,7 +105,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveSlide() {
 
         int current = slide.getCurrentPosition();
-        int limit = -3500;
+        int limit = -2990;
 
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
@@ -111,7 +116,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0 && current > limit+10) {
+        else if (joystickInput < 0 && current > limit) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
@@ -120,7 +125,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         else if (!holdingPosition) { // O operador ! (negação) verifica se holdingPosition é false
             slide.setTargetPosition(current); // Define a posição atual como alvo
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
+            slide.setPower(0.3); // Aplica uma pequena potência para segurar a posição
             holdingPosition = true; // Marca que o motor está segurando a posição
         }
 
@@ -135,7 +140,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double j = -gamepad2.right_stick_y;
+        double j = gamepad2.right_stick_y;
         int currentL = armMotorL.getCurrentPosition();
         int currentR = armMotorR.getCurrentPosition();
 
@@ -152,10 +157,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (j < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.2);
+            armMotorL.setPower(-0.1);
 
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(-0.2);
+            armMotorR.setPower(-0.1);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
