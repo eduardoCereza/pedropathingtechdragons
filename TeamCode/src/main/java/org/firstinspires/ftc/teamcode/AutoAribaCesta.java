@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
 import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.PathChain;
 import com.pedropathing.pathgen.Point;
@@ -24,14 +23,14 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class AutoAribaCesta extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(1.0);
+        leftS.setPosition(0.0);
         rightS.setPosition(1.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(0.0);
+        leftS.setPosition(1.0);
         rightS.setPosition(0.0);
         clippos = 0;
         pickpos = 1;
@@ -39,57 +38,52 @@ public class AutoAribaCesta extends OpMode {
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.5);
-        rightS.setPosition(0.5);
+        leftS.setPosition(0.6);
+        rightS.setPosition(0.4);
         clippos = 0;
         pickpos= 0;
-        specimenpickpos = 1;
+        specimenpickpos = 0;
     }
     public void closed(){
         garra.setPosition(0.0);
         isopen = 0;
     }
     public void open(){
-        garra.setPosition(0.5);
+        garra.setPosition(0.6);
         isopen = 1;
     }
-    public void subir(int target){
+    public void subir(int targetL, int targetR){
 
-        while (Right.getCurrentPosition() >= target){
+        while (Left.getCurrentPosition() <= -targetL && Right.getCurrentPosition() <= targetR){
+            Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-            Left.setTargetPosition(-target);
-            Right.setTargetPosition(target);
+            Left.setTargetPosition(targetL);
+            Right.setTargetPosition(targetR);
 
-            Left.setPower(0.5);
-            Right.setPower(0.5);
-            holdArm = 0;
+            Left.setPower(1);
+            Right.setPower(1);
         }
-        Left.setPower(0.0);
-        Right.setPower(0.0);
-        holdArm =1;
     }
     public void descer(int target){
 
-        while (Right.getCurrentPosition() <= target){
+        while (Left.getCurrentPosition() >= -target && Right.getCurrentPosition() >= target){
+            Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             Left.setTargetPosition(target);
             Right.setTargetPosition(-target);
 
-            Left.setPower(-0.4);
-            Right.setPower(-0.4);
-            holdArm = 0;
-        }
-        Left.setPower(0.0);
-        Right.setPower(0.0);
-        holdArm = 1;
+            Left.setPower(1);
+            Right.setPower(-1);}
     }
     public void hold(){
 
         PIDFController controller;
 
-        double minPower = 0.4;
-        double maxPower = 1.0;
-        controller = new PIDFController(12, 4, 5, 13);
+        double minPower = 0.2;
+        double maxPower = 0.5;
+        controller = new PIDFController(10, 3, 4, 12);
         controller.setInputRange(-4000, 4000);
         controller.setOutputRange(minPower, maxPower);
 
@@ -108,39 +102,24 @@ public class AutoAribaCesta extends OpMode {
     }
     public void extender( int target){
 
-        while (slide.getCurrentPosition() >= target){
-            slide.setTargetPosition(target);
+        while (slide.getCurrentPosition() <= target){
+            slide.setTargetPosition(-target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(-1.0);
-            holdSlide = 0;
         }
         slide.setPower(0.0);
-        holdSlide = 1;
     }
     public void recuar(int target){
 
-        while(slide.getCurrentPosition() <= target){
+        while(slide.getCurrentPosition() >= target){
             slide.setTargetPosition(target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(1.0);
-            holdSlide = 0;
         }
         slide.setPower(0.0);
-        holdSlide = 1;
-    }
-    public void stay(){
-        int currentPosition = slide.getCurrentPosition();
-
-        slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
-        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-        slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
     }
     int isopen;
-    int num;
     int  specimenpickpos, clippos, pickpos;
-    int holdSlide;
-    int holdArm;
-    Pose pose;
     private DcMotorEx slide, Left, Right;
     private Servo garra; //servo da garra/ponta
     private Servo leftS, rightS;
@@ -149,21 +128,87 @@ public class AutoAribaCesta extends OpMode {
     private int pathState; //variável de controle das trajetórias e ações
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
-    private final Pose startPose = new Pose(0, 71, Math.toRadians(180)); //posição inicial do robô
-    private PathChain traj1; //conjunto de trajetórias
+    private final Pose startPose = new Pose(0, 70, Math.toRadians(180)); //posição inicial do robô
+    private final Pose move1 = new Pose(-10, 20, Math.toRadians(180));
+    private final Pose move2 = new Pose(-5, 20, Math.toRadians(180));
+    private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(180));
+    private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(180));
+    private final Pose move5 = new Pose(31.220, 133.742, Math.toRadians(180));
+    private final Pose move6 = new Pose(93.438, 81.783, Math.toRadians(180));
+
+
+    private PathChain traj1, traj2, traj3, traj4; //conjunto de trajetórias
 
     public void buildPaths() {
+
         traj1 = follower.pathBuilder()
+                //vai até o primeiro specimen amarelo
+                .addPath(new BezierLine(new Point(startPose), new Point(move1)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+
+                //vai para trás
+                .addPath(new BezierLine(new Point(move1), new Point(move2)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
+        traj2 = follower.pathBuilder()//vai para o segundo specimen amarelo
+                .addPath(new BezierLine(new Point(move2), new Point(move3)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                //vai para tras
+                .addPath(new BezierLine(new Point(move3), new Point(move4)))
+                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
+
+        traj3 = follower.pathBuilder()//vai para tras//vai para o último specimen amarelo
+                .addPath(new BezierLine(new Point(move4), new Point(move5)))
+                .setTangentHeadingInterpolation()
+
+                //vai para tras
+                .addPath(new BezierLine(new Point(move5), new Point(move6)))
+                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
+
+        traj4 = follower.pathBuilder()//vai para tras//vai para a area de pontuacao
+                .addPath(new BezierLine(new Point(move6), new Point(move6)))
+                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
     }
 
     //dependendo de como funcionar a movimentação do atuador, esses cases vão precisar ser dividos e dividir as trajetórias neles, testar antes
     public void autonomousPathUpdate() {
         switch (pathState) {
+            //faz a trajetória
             case 0:
-                break;
+                //inicia a trajetória
+                follower.followPath(traj1, 0.6,true);
+
+                pathState = 1;
+
+
+            case 1:
+                if(!follower.isBusy()){
+                    //extender(-900);
+                    //open();
+                    //closed();
+                    //recuar(0);
+
+                }
+                follower.followPath(traj2, true);
+                pathState = 2;
+                /*
+            case 2:
+                if(!follower.isBusy()){
+
+                }
+                follower.followPath(traj3, true);
+                pathState = 3;
+            case 3:
+                if(!follower.isBusy()){
+
+                }
+                follower.followPath(traj4, true);
+
+                 */
         }
+
+
     }
 
     //controle das trajetórias
@@ -176,60 +221,42 @@ public class AutoAribaCesta extends OpMode {
     @Override
     public void loop() {
 
-        telemetry.addData("path state", pathState);
-        telemetry.addData("x", follower.getPose().getX());
-        telemetry.addData("y", follower.getPose().getY());
-        telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("pos", slide.getCurrentPosition());
-        telemetry.addData("state", holdSlide);
-        telemetry.addData("state arm", holdArm);
-        telemetry.update();
+        if (follower.isBusy() && slide.getPower() < 0.3){
+            int currentPosition = slide.getCurrentPosition();
 
-        pose = follower.getPose();
+            slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
+            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
 
-        //talvez precise mudar
-        if (holdSlide == 1){
-            stay();
         }
-
-        if (holdArm == 1){
+        if (follower.isBusy() && Left.getPower() < 0.3 && Right.getPower() < 0.3){
             hold();
         }
-
         if (isopen == 0){
-            garra.setPosition(0);
+            garra.setPosition(0.0);
         }
         if (clippos == 1){
-            leftS.setPosition(1.0);
+            leftS.setPosition(0.0);
             rightS.setPosition(1.0);
         }
         if (pickpos == 1){
-            leftS.setPosition(0.0);
+            leftS.setPosition(1.0);
             rightS.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            leftS.setPosition(0.5);
-            rightS.setPosition(0.5);
+            leftS.setPosition(0);
+            rightS.setPosition(0);
         }
 
         follower.update();
         autonomousPathUpdate();
-
     }
 
     //se precisar fazer alguma ação no init tem que por aq
     @Override
     public void init() {
 
-        holdSlide = 0;
-
-        holdArm = 1;
-
         isopen = 0;
-
-        clippos = 1;
-        pickpos = 0;
-        specimenpickpos = 0;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         leftS = hardwareMap.get(Servo.class, "servo2");
@@ -238,22 +265,14 @@ public class AutoAribaCesta extends OpMode {
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
-        leftS.setDirection(Servo.Direction.REVERSE);
+        Left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        Right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        Left.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
-        garra.setPosition(0);
-
-        rightS.setPosition(1.0);
-        leftS.setPosition(1.0);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -277,11 +296,6 @@ public class AutoAribaCesta extends OpMode {
     //quando mandar parar ele fará oque está aq
     @Override
     public void stop() {
-        holdArm = 0;
-        holdSlide = 0;
-        isopen = 1;
-        clippos = 0;
-        pickpos = 0;
-        specimenpickpos = 0;
     }
+
 }
