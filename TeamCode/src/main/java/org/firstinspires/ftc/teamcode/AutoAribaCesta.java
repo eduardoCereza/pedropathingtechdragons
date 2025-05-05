@@ -22,8 +22,6 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @Autonomous(name = "Cesta México Oficial")
 public class AutoAribaCesta extends OpMode {
 
-    int holdArm;
-
     public void clipPos(){
         leftS.setPosition(1.0);
         rightS.setPosition(1.0);
@@ -141,8 +139,6 @@ public class AutoAribaCesta extends OpMode {
     int  specimenpickpos, clippos, pickpos;
     int holdSlide;
     int holdArm;
-    int isopen;
-    int  specimenpickpos, clippos, pickpos;
     private DcMotorEx slide, Left, Right;
     private Servo garra; //servo da garra/ponta
     private Servo leftS, rightS;
