@@ -22,15 +22,17 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @Autonomous(name = "Cesta México Oficial")
 public class AutoAribaCesta extends OpMode {
 
+    int holdArm;
+
     public void clipPos(){
-        leftS.setPosition(0.0);
+        leftS.setPosition(1.0);
         rightS.setPosition(1.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(1.0);
+        leftS.setPosition(0.0);
         rightS.setPosition(0.0);
         clippos = 0;
         pickpos = 1;
@@ -38,52 +40,57 @@ public class AutoAribaCesta extends OpMode {
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.6);
-        rightS.setPosition(0.4);
+        leftS.setPosition(0.5);
+        rightS.setPosition(0.5);
         clippos = 0;
         pickpos= 0;
-        specimenpickpos = 0;
+        specimenpickpos = 1;
     }
     public void closed(){
         garra.setPosition(0.0);
         isopen = 0;
     }
     public void open(){
-        garra.setPosition(0.6);
+        garra.setPosition(0.5);
         isopen = 1;
     }
-    public void subir(int targetL, int targetR){
+    public void subir(int target){
 
-        while (Left.getCurrentPosition() <= -targetL && Right.getCurrentPosition() <= targetR){
-            Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (Right.getCurrentPosition() >= target){
 
-            Left.setTargetPosition(targetL);
-            Right.setTargetPosition(targetR);
+            Left.setTargetPosition(-target);
+            Right.setTargetPosition(target);
 
-            Left.setPower(1);
-            Right.setPower(1);
+            Left.setPower(0.5);
+            Right.setPower(0.5);
+            holdArm = 0;
         }
+        Left.setPower(0.0);
+        Right.setPower(0.0);
+        holdArm =1;
     }
     public void descer(int target){
 
-        while (Left.getCurrentPosition() >= -target && Right.getCurrentPosition() >= target){
-            Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        while (Right.getCurrentPosition() <= target){
 
             Left.setTargetPosition(target);
             Right.setTargetPosition(-target);
 
-            Left.setPower(1);
-            Right.setPower(-1);}
+            Left.setPower(-0.4);
+            Right.setPower(-0.4);
+            holdArm = 0;
+        }
+        Left.setPower(0.0);
+        Right.setPower(0.0);
+        holdArm = 1;
     }
     public void hold(){
 
         PIDFController controller;
 
-        double minPower = 0.2;
-        double maxPower = 0.5;
-        controller = new PIDFController(10, 3, 4, 12);
+        double minPower = 0.4;
+        double maxPower = 1.0;
+        controller = new PIDFController(12, 4, 5, 13);
         controller.setInputRange(-4000, 4000);
         controller.setOutputRange(minPower, maxPower);
 
@@ -102,22 +109,38 @@ public class AutoAribaCesta extends OpMode {
     }
     public void extender( int target){
 
-        while (slide.getCurrentPosition() <= target){
-            slide.setTargetPosition(-target);
+        while (slide.getCurrentPosition() >= target){
+            slide.setTargetPosition(target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(-1.0);
+            holdSlide = 0;
         }
         slide.setPower(0.0);
+        holdSlide = 1;
     }
     public void recuar(int target){
 
-        while(slide.getCurrentPosition() >= target){
+        while(slide.getCurrentPosition() <= target){
             slide.setTargetPosition(target);
             slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             slide.setPower(1.0);
+            holdSlide = 0;
         }
         slide.setPower(0.0);
+        holdSlide = 1;
     }
+    public void stay(){
+        int currentPosition = slide.getCurrentPosition();
+
+        slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
+        slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
+        slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
+    }
+    int isopen;
+    int num;
+    int  specimenpickpos, clippos, pickpos;
+    int holdSlide;
+    int holdArm;
     int isopen;
     int  specimenpickpos, clippos, pickpos;
     private DcMotorEx slide, Left, Right;
@@ -181,25 +204,40 @@ public class AutoAribaCesta extends OpMode {
 
                 pathState = 1;
 
+                break;
+
 
             case 1:
                 if(!follower.isBusy()){
-                    //extender(-900);
-                    //open();
-                    //closed();
-                    //recuar(0);
+                    subir(650);
+                    extender(-1500);
+                    open();
+                    recuar(0);
 
                 }
                 follower.followPath(traj2, true);
                 pathState = 2;
-                /*
+                break;
             case 2:
+                if(!follower.isBusy()){
+                    extender(-1500);
+                    open();
+                    closed();
+                    recuar(0);
+
+                }
+                follower.followPath(traj2, true);
+                pathState = 3;
+                break;
+                /*
+
+            case 3:
                 if(!follower.isBusy()){
 
                 }
                 follower.followPath(traj3, true);
-                pathState = 3;
-            case 3:
+                pathState = 4;
+            case 4:
                 if(!follower.isBusy()){
 
                 }
