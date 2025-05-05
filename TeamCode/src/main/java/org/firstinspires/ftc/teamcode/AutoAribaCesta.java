@@ -134,6 +134,8 @@ public class AutoAribaCesta extends OpMode {
         slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
         slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
     }
+
+    Pose pose;
     int isopen;
     int num;
     int  specimenpickpos, clippos, pickpos;
@@ -205,10 +207,11 @@ public class AutoAribaCesta extends OpMode {
 
             case 1:
                 if(!follower.isBusy()){
-                    subir(650);
+                    subir(-650);
                     extender(-1500);
                     open();
                     recuar(0);
+                    descer(0);
 
                 }
                 follower.followPath(traj2, true);
@@ -217,6 +220,7 @@ public class AutoAribaCesta extends OpMode {
             case 2:
                 if(!follower.isBusy()){
                     extender(-1500);
+                    subir(-650);
                     open();
                     closed();
                     recuar(0);
@@ -241,8 +245,6 @@ public class AutoAribaCesta extends OpMode {
 
                  */
         }
-
-
     }
 
     //controle das trajetórias
@@ -255,42 +257,60 @@ public class AutoAribaCesta extends OpMode {
     @Override
     public void loop() {
 
-        if (follower.isBusy() && slide.getPower() < 0.3){
-            int currentPosition = slide.getCurrentPosition();
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("pos", slide.getCurrentPosition());
+        telemetry.addData("state", holdSlide);
+        telemetry.addData("state arm", holdArm);
+        telemetry.update();
 
-            slide.setTargetPosition(currentPosition); // Define a posição atual como alvo
-            slide.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Mantém o motor na posição
-            slide.setPower(0.1); // Aplica uma pequena potência para segurar a posição
+        pose = follower.getPose();
 
+        //talvez precise mudar
+        if (holdSlide == 1){
+            stay();
         }
-        if (follower.isBusy() && Left.getPower() < 0.3 && Right.getPower() < 0.3){
+
+        if (holdArm == 1){
             hold();
         }
+
         if (isopen == 0){
-            garra.setPosition(0.0);
+            garra.setPosition(0);
         }
         if (clippos == 1){
-            leftS.setPosition(0.0);
+            leftS.setPosition(1.0);
             rightS.setPosition(1.0);
         }
         if (pickpos == 1){
-            leftS.setPosition(1.0);
+            leftS.setPosition(0.0);
             rightS.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            leftS.setPosition(0);
-            rightS.setPosition(0);
+            leftS.setPosition(0.5);
+            rightS.setPosition(0.5);
         }
 
         follower.update();
         autonomousPathUpdate();
+
     }
 
     //se precisar fazer alguma ação no init tem que por aq
     @Override
     public void init() {
 
+        holdSlide = 0;
+
+        holdArm = 1;
+
         isopen = 0;
+
+        clippos = 1;
+        pickpos = 0;
+        specimenpickpos = 0;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         leftS = hardwareMap.get(Servo.class, "servo2");
@@ -299,14 +319,22 @@ public class AutoAribaCesta extends OpMode {
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
-        Left.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        Right.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftS.setDirection(Servo.Direction.REVERSE);
 
+        Left.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        garra.setPosition(0);
+
+        rightS.setPosition(1.0);
+        leftS.setPosition(1.0);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
@@ -330,6 +358,11 @@ public class AutoAribaCesta extends OpMode {
     //quando mandar parar ele fará oque está aq
     @Override
     public void stop() {
+        holdArm = 0;
+        holdSlide = 0;
+        isopen = 1;
+        clippos = 0;
+        pickpos = 0;
+        specimenpickpos = 0;
     }
-
 }
