@@ -281,7 +281,7 @@ public class AutoAribaCesta extends OpMode {
             case 12:
                 follower.followPath(traj7, true);
                 break;
-                
+
                  */
         }
     }
