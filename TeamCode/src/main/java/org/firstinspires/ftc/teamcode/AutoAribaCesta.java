@@ -190,7 +190,7 @@ public class AutoAribaCesta extends OpMode {
                 .addPath(new BezierLine(new Point(move5), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
 
-        traj6 = follower.pathBuilder()//vai para tras//vai para a area de pontuacao
+        traj6 = follower.pathBuilder()//vai para a area de pontuacao
                 .addPath(new BezierLine(new Point(move6), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
     }
@@ -202,12 +202,8 @@ public class AutoAribaCesta extends OpMode {
             case 0:
                 //inicia a trajetória
                 follower.followPath(traj1, 0.6,true);
-
                 pathState = 1;
-
                 break;
-
-
             case 1:
                 if(!follower.isBusy()){
                     subir(-650);
@@ -223,11 +219,10 @@ public class AutoAribaCesta extends OpMode {
             case 2:
                 if(!follower.isBusy()){
                     extender(-1500);
-                    subir(-650);
-                    open();
                     closed();
+                    subir(-650);
                     recuar(0);
-
+                    open();
                 }
                 follower.followPath(traj2, true);
                 pathState = 3;
