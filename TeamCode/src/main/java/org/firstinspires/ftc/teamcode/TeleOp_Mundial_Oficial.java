@@ -91,14 +91,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         telemetry.addData("Pos Left: ", armMotorL.getCurrentPosition());
         telemetry.addData("Pos Right: ", armMotorR.getCurrentPosition());
-
-        /* Telemetry Outputs of our Follower */
-        telemetry.addData("X", follower.getPose().getX());
-        telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
-
-        /* Update Telemetry to the Driver Hub */
-        telemetry.update();
     }
 
     //TODO: Mover Slide
@@ -135,7 +127,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         telemetry.addData("Posição Slide:", current);
     }
-
 
     //TODO: Mover base do atuador
     public void armBase() {
@@ -189,7 +180,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
         telemetry.addData("POS RIGHT: ", armMotorR.getCurrentPosition());
     }
-
 
     //Todo: Mover servo
     public void moveServo(){
