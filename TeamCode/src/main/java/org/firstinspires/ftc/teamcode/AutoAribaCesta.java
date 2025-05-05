@@ -158,7 +158,7 @@ public class AutoAribaCesta extends OpMode {
     private final Pose move6 = new Pose(93.438, 81.783, Math.toRadians(180));
 
 
-    private PathChain traj1, traj2, traj3, traj4; //conjunto de trajetórias
+    private PathChain traj1, traj2, traj3, traj4, traj5, traj6; //conjunto de trajetórias
 
     public void buildPaths() {
 
@@ -174,20 +174,23 @@ public class AutoAribaCesta extends OpMode {
 
         traj2 = follower.pathBuilder()//vai para o segundo specimen amarelo
                 .addPath(new BezierLine(new Point(move2), new Point(move3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180)).build();
+
                 //vai para tras
+        traj3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move3), new Point(move4)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
 
-        traj3 = follower.pathBuilder()//vai para tras//vai para o último specimen amarelo
+        traj4 = follower.pathBuilder()//vai para o último specimen amarelo
                 .addPath(new BezierLine(new Point(move4), new Point(move5)))
-                .setTangentHeadingInterpolation()
+                .setTangentHeadingInterpolation().build();
 
                 //vai para tras
+        traj5 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move5), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
 
-        traj4 = follower.pathBuilder()//vai para tras//vai para a area de pontuacao
+        traj6 = follower.pathBuilder()//vai para tras//vai para a area de pontuacao
                 .addPath(new BezierLine(new Point(move6), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
     }
@@ -229,7 +232,6 @@ public class AutoAribaCesta extends OpMode {
                 follower.followPath(traj2, true);
                 pathState = 3;
                 break;
-                /*
 
             case 3:
                 if(!follower.isBusy()){
@@ -237,13 +239,29 @@ public class AutoAribaCesta extends OpMode {
                 }
                 follower.followPath(traj3, true);
                 pathState = 4;
+                break;
             case 4:
                 if(!follower.isBusy()){
 
                 }
                 follower.followPath(traj4, true);
+                pathState = 5;
+                break;
 
-                 */
+            case 5:
+                if(!follower.isBusy()){
+
+                }
+                follower.followPath(traj5, true);
+                pathState = 6;
+                break;
+            case 6:
+                if(!follower.isBusy()){
+
+                }
+                follower.followPath(traj6, true);
+                pathState = 6;
+                break;
         }
     }
 
