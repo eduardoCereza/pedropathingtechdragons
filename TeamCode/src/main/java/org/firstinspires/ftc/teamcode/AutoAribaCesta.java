@@ -221,6 +221,7 @@ public class AutoAribaCesta extends OpMode {
                 descer(0);
                 pathState = 2;
                 break;
+                /*
             case 2:
                 //frente
                 follower.followPath(traj1, true);
@@ -308,6 +309,8 @@ public class AutoAribaCesta extends OpMode {
                 //end
                 follower.followPath(traj7, true);
                 break;
+                
+                 */
         }
     }
 
