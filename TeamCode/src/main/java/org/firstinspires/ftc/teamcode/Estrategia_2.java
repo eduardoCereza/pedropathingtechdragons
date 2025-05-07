@@ -152,7 +152,7 @@ public class Estrategia_2 extends OpMode {
         .build();
 
         traj2 = follower.pathBuilder()//vai para o segundo specimen amarelo
-                .addPath(new BezierLine(new Point(move2), new Point(move3)))
+        .addPath(new BezierLine(new Point(move2), new Point(move3)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 //vai para tras
                 .addPath(new BezierLine(new Point(move3), new Point(move4)))

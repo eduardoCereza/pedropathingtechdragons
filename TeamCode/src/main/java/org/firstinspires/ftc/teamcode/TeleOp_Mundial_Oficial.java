@@ -92,14 +92,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         telemetry.addData("Pos Left: ", armMotorL.getCurrentPosition());
         telemetry.addData("Pos Right: ", armMotorR.getCurrentPosition());
-
-        /* Telemetry Outputs of our Follower */
-        telemetry.addData("X", follower.getPose().getX());
-        telemetry.addData("Y", follower.getPose().getY());
-        telemetry.addData("Heading in Degrees", Math.toDegrees(follower.getPose().getHeading()));
-
-        /* Update Telemetry to the Driver Hub */
-        telemetry.update();
     }
 
     //TODO: Mover Slide
@@ -157,10 +149,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
         else if (j < 0) {
             armMotorL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorL.setPower(-0.1);
+            armMotorL.setPower(-0.2);
 
             armMotorR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            armMotorR.setPower(-0.1);
+            armMotorR.setPower(-0.2);
             modeBase = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick estiver parado e o motor ainda não estiver segurando a posição
@@ -189,7 +181,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
         telemetry.addData("POS RIGHT: ", armMotorR.getCurrentPosition());
     }
-
 
     //Todo: Mover servo
     public void moveServo(){
