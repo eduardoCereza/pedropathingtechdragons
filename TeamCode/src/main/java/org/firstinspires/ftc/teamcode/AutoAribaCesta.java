@@ -149,7 +149,9 @@ public class AutoAribaCesta extends OpMode {
     private int pathState; //variável de controle das trajetórias e ações
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
-    private final Pose startPose = new Pose(0, 80, Math.toRadians(180)); //posição inicial do robô
+    private final Pose startPose = new Pose(0, 80, Math.toRadians(180));//posição inicial do robô
+
+    private final Pose move0 = new Pose(-5, 20, Math.toRadians(180));
     private final Pose move1 = new Pose(-10, 20, Math.toRadians(180));
     private final Pose move2 = new Pose(-5, 20, Math.toRadians(180));
     private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(180));
@@ -162,16 +164,15 @@ public class AutoAribaCesta extends OpMode {
 
     public void buildPaths() {
 
-        /*
         traj0 = follower.pathBuilder()
-                //vai até o primeiro specimen amarelo
-                .addPath(new BezierLine(new Point(startPose), new Point(move1)))
+                //vai até o a cesta para colocar o specimen amarelo que já esta no robo
+                .addPath(new BezierLine(new Point(startPose), new Point(move0)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
 
-         */
+
         traj1 = follower.pathBuilder()
                 //vai até o primeiro specimen amarelo
-                .addPath(new BezierLine(new Point(startPose), new Point(move1)))
+                .addPath(new BezierLine(new Point(move0), new Point(move1)))
                 .setConstantHeadingInterpolation(Math.toRadians(180)).build();
 
         traj2 = follower.pathBuilder()//vai para trás
@@ -206,69 +207,66 @@ public class AutoAribaCesta extends OpMode {
         switch (pathState) {
             //faz a trajetória
             case 0:
-                follower.followPath(traj1, 0.6,true);
+                //tras
+                subir(-650);
+                follower.followPath(traj0, 0.9,true);
                 pathState = 1;
                 break;
             case 1:
-                extender(-1500);
-                closed();
+                //atuador
+                extender(-3000);
+                clipPos();
+                open();
                 recuar(0);
+                descer(0);
                 pathState = 2;
                 break;
-                /*
             case 2:
-                follower.followPath(traj2, true);
+                //frente
+                follower.followPath(traj1, true);
                 pathState = 3;
                 break;
             case 3:
-                clipPos();
-                subir(-650);
-                extender(-1800);
-                open();
-                specimenPickpos();
+                //pegar
+                extender(-1500);
+                closed();
                 recuar(0);
-                descer(0);
                 pathState = 4;
                 break;
             case 4:
-                follower.followPath(traj3, true);
+                //tras
+                follower.followPath(traj2, true);
                 pathState = 5;
                 break;
             case 5:
-                extender(-1500);
-                closed();
+                //colocar
+                clipPos();
+                subir(-650);
+                extender(-1800);
+                open();
+                specimenPickpos();
                 recuar(0);
+                descer(0);
                 pathState = 6;
                 break;
             case 6:
-                follower.followPath(traj4, true);
+                //frente
+                follower.followPath(traj3, true);
                 pathState = 7;
                 break;
             case 7:
-                clipPos();
-                subir(-650);
-                extender(-1800);
-                open();
-                specimenPickpos();
-                recuar(0);
-                descer(0);
-                pathState = 8;
-                break;
-            case 8:
-                follower.followPath(traj5, true);
-                pathState = 8;
-                break;
-            case 9:
+                //pegar
                 extender(-1500);
                 closed();
                 recuar(0);
-                pathState = 10;
+                pathState = 8;
+            case 8:
+                //tras
+                follower.followPath(traj4, true);
+                pathState = 9;
                 break;
-            case 10:
-                follower.followPath(traj6, true);
-                pathState = 11;
-                break;
-            case 11:
+            case 9:
+                //colocar
                 clipPos();
                 subir(-650);
                 extender(-1800);
@@ -276,13 +274,40 @@ public class AutoAribaCesta extends OpMode {
                 specimenPickpos();
                 recuar(0);
                 descer(0);
+                pathState = 10;
+                break;
+            case 10:
+                //frente
+                follower.followPath(traj5, true);
+                pathState = 11;
+                break;
+            case 11:
+                //pegar
+                extender(-1500);
+                closed();
+                recuar(0);
                 pathState = 12;
                 break;
             case 12:
+                //tras
+                follower.followPath(traj6, true);
+                pathState = 13;
+                break;
+            case 13:
+                //colocar
+                clipPos();
+                subir(-650);
+                extender(-1800);
+                open();
+                specimenPickpos();
+                recuar(0);
+                descer(0);
+                pathState = 14;
+                break;
+            case 14:
+                //end
                 follower.followPath(traj7, true);
                 break;
-
-                 */
         }
     }
 
