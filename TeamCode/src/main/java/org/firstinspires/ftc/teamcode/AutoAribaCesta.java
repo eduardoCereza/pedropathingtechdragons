@@ -208,16 +208,22 @@ public class AutoAribaCesta extends OpMode {
             //faz a trajetória
             case 0:
                 //tras
+                //subir atuador e ir para o ponto para colocar o specimen na sexta
                 subir(-650);
                 follower.followPath(traj0, 1,true);
                 pathState = 1;
                 break;
             case 1:
                 //atuador
+                //posição servo para cesta
                 clipPos();
+                //extender slide
                 extender(-3000);
+                //abrir garra
                 open();
+                //recua o slide
                 recuar(0);
+                //desce a base do atuador
                 descer(0);
                 pathState = 2;
                 break;
