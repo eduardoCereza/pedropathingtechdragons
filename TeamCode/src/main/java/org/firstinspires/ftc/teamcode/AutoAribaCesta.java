@@ -209,7 +209,7 @@ public class AutoAribaCesta extends OpMode {
             case 0:
                 //tras
                 subir(-650);
-                follower.followPath(traj0, 0.9,true);
+                follower.followPath(traj0, 1,true);
                 pathState = 1;
                 break;
             case 1:
@@ -224,7 +224,7 @@ public class AutoAribaCesta extends OpMode {
                 /*
             case 2:
                 //frente
-                follower.followPath(traj1, true);
+                follower.followPath(traj1, 1, true);
                 pathState = 3;
                 break;
             case 3:
@@ -236,7 +236,7 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 4:
                 //tras
-                follower.followPath(traj2, true);
+                follower.followPath(traj2, 1, true);
                 pathState = 5;
                 break;
             case 5:
@@ -252,7 +252,7 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 6:
                 //frente
-                follower.followPath(traj3, true);
+                follower.followPath(traj3, 1, true);
                 pathState = 7;
                 break;
             case 7:
@@ -263,7 +263,7 @@ public class AutoAribaCesta extends OpMode {
                 pathState = 8;
             case 8:
                 //tras
-                follower.followPath(traj4, true);
+                follower.followPath(traj4, 1,  true);
                 pathState = 9;
                 break;
             case 9:
@@ -279,7 +279,7 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 10:
                 //frente
-                follower.followPath(traj5, true);
+                follower.followPath(traj5, 1, true);
                 pathState = 11;
                 break;
             case 11:
@@ -291,7 +291,7 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 12:
                 //tras
-                follower.followPath(traj6, true);
+                follower.followPath(traj6, 1, true);
                 pathState = 13;
                 break;
             case 13:
@@ -307,13 +307,12 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 14:
                 //end
-                follower.followPath(traj7, true);
+                follower.followPath(traj7, 1, true);
                 break;
 
                  */
         }
     }
-
     //controle das trajetórias
     public void setPathState(int pState) {
         pathState = pState;
