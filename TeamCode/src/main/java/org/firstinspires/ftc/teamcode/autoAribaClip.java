@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class autoAribaClip extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(1.0);
-        rightS.setPosition(1.0);
+        leftS.setPosition(0.65);
+        rightS.setPosition(0.65);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
@@ -39,8 +39,8 @@ public class autoAribaClip extends OpMode {
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.5);
-        rightS.setPosition(0.5);
+        leftS.setPosition(0.85);
+        rightS.setPosition(0.85);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
@@ -75,8 +75,8 @@ public class autoAribaClip extends OpMode {
             Left.setTargetPosition(target);
             Right.setTargetPosition(-target);
 
-            Left.setPower(-0.4);
-            Right.setPower(-0.4);
+            Left.setPower(-0.2);
+            Right.setPower(-0.2);
             holdArm = 0;
         }
         Left.setPower(0.0);
@@ -87,7 +87,7 @@ public class autoAribaClip extends OpMode {
 
         PIDFController controller;
 
-        double minPower = 0.4;
+        double minPower = 0.7;
         double maxPower = 1.0;
         controller = new PIDFController(12, 4, 5, 13);
         controller.setInputRange(-4000, 4000);
@@ -150,15 +150,19 @@ public class autoAribaClip extends OpMode {
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 71, Math.toRadians(180)); //posição inicial do robô
-    private final Pose ClipPose = new Pose(21, 71, Math.toRadians(180));
+    private final Pose ClipPose = new Pose(23.2, 71, Math.toRadians(180));
     private final Pose Control1 = new Pose(6, 20, Math.toRadians(180));
-    private final Pose move2 = new Pose(47, 33, Math.toRadians(180)); //vai para frente
-    private final Pose move3 = new Pose(47, 15, Math.toRadians(180));
+    private final Pose move2 = new Pose(49, 33, Math.toRadians(180)); //vai para frente
+    private final Pose move3 = new Pose(49, 15, Math.toRadians(180));
     private final Pose move4 = new Pose(6, 15, Math.toRadians(180)); //empurra o sample para o jogador humano
-    private final Pose move5 = new Pose(47,5, Math.toRadians(180));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(4, 5, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
-    private final Pose clip2 = new Pose(27, 80, Math.toRadians(180));
-    private final Pose move7 = new Pose(4, 30, Math.toRadians(180));
+    private final Pose move5 = new Pose(49,5, Math.toRadians(180));// vai para a direita na frente do segundo sample
+    private final Pose move6 = new Pose(7, 5, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
+    private final Pose control2 = new Pose(10, 70, Math.toRadians(180));
+    private final Pose clip2 = new Pose(23, 75, Math.toRadians(180));
+    private final Pose moveX = new Pose(26, 75, Math.toRadians(180));
+    private final Pose move7 = new Pose(10, 30, Math.toRadians(180));
+    private final Pose move8 = new Pose(5, 30, Math.toRadians(180));
+    private final Pose clip3 = new Pose(22, 90, Math.toRadians(180));
     private PathChain traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
 
     public void buildPaths() {
@@ -188,12 +192,21 @@ public class autoAribaClip extends OpMode {
                 .build();
 
         traj4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(move6), new Point(clip2)))
+                .addPath(new BezierCurve(new Point(move6), new Point(control2), new Point(clip2)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(clip2), new Point(moveX)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
 
         traj5 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(clip2), new Point(move7)))
+                .addPath(new BezierLine(new Point(moveX), new Point(move7)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .addPath(new BezierLine(new Point(move7), new Point(move8)))
+                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .build();
+
+        traj6 = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(move8), new Point(clip3)))
                 .setConstantHeadingInterpolation(Math.toRadians(180))
                 .build();
     }
@@ -203,11 +216,11 @@ public class autoAribaClip extends OpMode {
         switch (pathState) {
             case 0:
                 closed();
-                subir(-370);
+                subir(-650);
                 closed();
-                extender(-700);
+                extender(-1150);
                 closed();
-                follower.followPath(traj1, 0.5, true);
+                follower.followPath(traj1, 0.4, false);
                 setPathState(1);
                 break;
 
@@ -220,16 +233,16 @@ public class autoAribaClip extends OpMode {
                 if (num == 1){
                     //mudar
                     recuar(-250);
-                    descer(-10);
+                    descer(0);
                     specimenPickpos();
-                    follower.followPath(traj2, 0.95, false);
+                    follower.followPath(traj2, 0.75, false);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy() && pathState ==2){
                     follower.followPath(traj3, 0.75, false);
-                    setPathState(3);
+                    setPathState(3);//
                 }
                 break;
             case 3:
@@ -241,10 +254,10 @@ public class autoAribaClip extends OpMode {
                 break;
             case 4:
                 if(num == 2 && garra.getPosition() == 0.0){
-                    subir(-400);
-                    follower.followPath(traj4, 1.0, true);
+                    subir(-650);
+                    follower.followPath(traj4, 0.6, false);
                     clipPos();
-                    extender(-700);
+                    extender(-1250);
                     setPathState(5);
                 }
                 break;
@@ -258,38 +271,37 @@ public class autoAribaClip extends OpMode {
             case 6:
                 if ((!follower.isBusy() && pathState == 6)){
                     recuar(-100);
-                    descer(-10);
+                    descer(0);
                     specimenPickpos();
+                    follower.followPath(traj5, 0.9, false);
                 }
                     setPathState(7);
 
                 break;
             case 7:
                 if (!follower.isBusy() && pathState == 7){
-                    follower.followPath(traj5, 0.9, true);
+                    closed();
+                    subir(-650);
+                    setPathState(8);
                 }
-                //if (garra.getPosition() == 0.0){
-                    //subir(-400);
-                   // follower.followPath();
-                    //clipPos();
-                    //extender(-700);
-                    //setPathState(8);
-                //}
                 break;
-            //case 8:
-                //if(!follower.isBusy() && pathState == 8){
-                    //extender(-1700);
-                   // open();
-                   // setPathState(9);
-                //}
-                //break;
-            //case 9:
-              //  if(!follower.isBusy() && pathState == 9){
-                //    recuar(-100);
-                  //  descer(-10);
-                    //follower.followPath();
+            case 8:
+                follower.followPath(traj6, 0.9, false);
+                clipPos();
+                extender(-1150);
+
+                break;
+            case 9:
+                if(!follower.isBusy() && pathState == 8){
+                    extender(-1700);
+                    open();
+                    setPathState(9);
+                }
+                if(!follower.isBusy() && pathState == 9){
+                    recuar(-100);
+                    descer(0);
                     //estaciona
-                //}
+                }
         }
     }
 
@@ -327,8 +339,8 @@ public class autoAribaClip extends OpMode {
             garra.setPosition(0);
         }
         if (clippos == 1){
-            leftS.setPosition(1.0);
-            rightS.setPosition(1.0);
+            leftS.setPosition(0.85);
+            rightS.setPosition(0.85);
         }
         if (pickpos == 1){
             leftS.setPosition(0.0);
