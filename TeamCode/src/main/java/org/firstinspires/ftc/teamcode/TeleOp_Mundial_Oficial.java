@@ -37,6 +37,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         Constants.setConstants(FConstants.class, LConstants.class);
         follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
         follower.setStartingPose(startPose);
+
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -136,11 +137,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         telemetry.addData("Posição Slide:", current);
     }
 
-
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double j = gamepad2.right_stick_y;
+        double j = -gamepad2.right_stick_y;
         int currentL = armMotorL.getCurrentPosition();
         int currentR = armMotorR.getCurrentPosition();
 
@@ -208,10 +208,14 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             telemetry.addLine("90");
         }
 
+
+
         if(gamepad2.right_bumper){
             garra.setPosition(0.6);
         }else{
             garra.setPosition(0);
         }
+
+
     }
 }
