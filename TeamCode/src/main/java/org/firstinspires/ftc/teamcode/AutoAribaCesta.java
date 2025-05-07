@@ -214,8 +214,8 @@ public class AutoAribaCesta extends OpMode {
                 break;
             case 1:
                 //atuador
-                extender(-3000);
                 clipPos();
+                extender(-3000);
                 open();
                 recuar(0);
                 descer(0);
@@ -309,7 +309,7 @@ public class AutoAribaCesta extends OpMode {
                 //end
                 follower.followPath(traj7, true);
                 break;
-                
+
                  */
         }
     }
