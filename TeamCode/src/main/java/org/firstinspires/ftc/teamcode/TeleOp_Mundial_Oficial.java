@@ -30,7 +30,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     Servo servo1, servo2, garra;
     boolean holdingPosition = false, modeBase = false;
     private final Pose startPose = new Pose(0, 0, 0);
-    int targetR, targetL, estado;
+    int limit0, estado;
 
     @Override
     public void init() {
@@ -99,7 +99,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         int current = slide.getCurrentPosition();
         int limit = -2990;
-
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
         // Se o joystick for movido para cima e a posição for menor que 0, move o motor
