@@ -132,7 +132,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     //TODO: Mover base do atuador
     public void armBase() {
 
-        double j = -gamepad2.right_stick_y;
+        double j = gamepad2.right_stick_y;
         int currentL = armMotorL.getCurrentPosition();
         int currentR = armMotorR.getCurrentPosition();
 
