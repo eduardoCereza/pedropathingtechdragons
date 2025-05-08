@@ -179,6 +179,8 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
         telemetry.addData("POS LEFT:", armMotorL.getCurrentPosition());
         telemetry.addData("POS RIGHT: ", armMotorR.getCurrentPosition());
+        telemetry.addData("Power Left: ", armMotorR.getPower());
+        telemetry.addData("Joystick Atuador: ", j);
     }
 
     //Todo: Mover servo
