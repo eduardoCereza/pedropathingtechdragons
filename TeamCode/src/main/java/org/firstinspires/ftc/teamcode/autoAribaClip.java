@@ -222,6 +222,7 @@ public class autoAribaClip extends OpMode {
                 closed();
                 follower.followPath(traj1, 0.4, false);
                 setPathState(1);
+                
                 break;
 
             case 1:
