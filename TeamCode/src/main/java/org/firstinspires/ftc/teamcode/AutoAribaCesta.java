@@ -23,23 +23,20 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class AutoAribaCesta extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(1.0);
-        rightS.setPosition(1.0);
+        servo.setPosition(0.95);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(0.0);
-        rightS.setPosition(0.0);
+        servo.setPosition(0.0);
         clippos = 0;
         pickpos = 1;
         specimenpickpos = 0;
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.5);
-        rightS.setPosition(0.5);
+        servo.setPosition(0.6);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
@@ -143,7 +140,7 @@ public class AutoAribaCesta extends OpMode {
     int holdArm;
     private DcMotorEx slide, Left, Right;
     private Servo garra; //servo da garra/ponta
-    private Servo leftS, rightS;
+    private Servo servo;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código
     private int pathState; //variável de controle das trajetórias e ações
@@ -353,16 +350,13 @@ public class AutoAribaCesta extends OpMode {
             garra.setPosition(0);
         }
         if (clippos == 1){
-            leftS.setPosition(1.0);
-            rightS.setPosition(1.0);
+            servo.setPosition(0.95);
         }
         if (pickpos == 1){
-            leftS.setPosition(0.0);
-            rightS.setPosition(0.0);
+            servo.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            leftS.setPosition(0.5);
-            rightS.setPosition(0.5);
+            servo.setPosition(0.6);
         }
 
         follower.update();
@@ -385,13 +379,12 @@ public class AutoAribaCesta extends OpMode {
         specimenpickpos = 0;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        leftS = hardwareMap.get(Servo.class, "servo2");
-        rightS = hardwareMap.get(Servo.class, "servo1");
+        servo = hardwareMap.get(Servo.class, "servo1");
         garra = hardwareMap.get(Servo.class, "garra");
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
 
-        leftS.setDirection(Servo.Direction.REVERSE);
+        servo.setDirection(Servo.Direction.REVERSE);
 
         Left.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
@@ -405,8 +398,7 @@ public class AutoAribaCesta extends OpMode {
 
         garra.setPosition(0);
 
-        rightS.setPosition(1.0);
-        leftS.setPosition(1.0);
+        servo.setPosition(0.95);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);

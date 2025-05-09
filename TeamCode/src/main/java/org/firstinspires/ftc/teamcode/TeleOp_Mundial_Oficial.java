@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial Oficial")
 public class TeleOp_Mundial_Oficial extends OpMode {
     private Follower follower;
-    DcMotorEx slide, armMotorL, armMotorR, claw;
+    DcMotorEx slide, armMotorL, armMotorR;
     double powerR, powerL;
     Servo servo1, servo2, garra;
     boolean holdingPosition = false, modeBase = false;
@@ -41,13 +41,10 @@ public class TeleOp_Mundial_Oficial extends OpMode {
         slide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        claw.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
-
         servo1 = hardwareMap.get(Servo.class, "servo1");
         //servo2 = hardwareMap.get(Servo.class, "servo2");
         //servo2.setDirection(Servo.Direction.REVERSE);
-        //garra = hardwareMap.get(Servo.class, "garra");
-        claw = hardwareMap.get(DcMotorEx.class, "claw");
+        garra = hardwareMap.get(Servo.class, "garra");
 
         armMotorL = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         armMotorR = hardwareMap.get(DcMotorEx.class, "armmotorright");
@@ -66,17 +63,17 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     @Override
     public void loop() {
 
-        if(gamepad1.a) {
+        if (gamepad1.a) {
             estado = 2;
-        }else if(gamepad1.b){
+        } else if (gamepad1.b) {
             estado = 1;
         }
 
-        if(estado == 1){
+        if (estado == 1) {
             follower.setTeleOpMovementVectors(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Normal Chassi");
-        }else if(estado ==2){
+        } else if (estado == 2) {
             follower.setTeleOpMovementVectors(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x, true);
             follower.update();
             telemetry.addLine("Inverso Chassi");
@@ -184,28 +181,22 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void moveServo(){
 
         if(gamepad2.y){
-            servo1.setPosition(0.85);
+            //posição pick
+            servo1.setPosition(0);
             telemetry.addLine("Pick");
         }else if(gamepad2.a){
-            servo1.setPosition(0);
+            servo1.setPosition(0.95);
             telemetry.addLine("Clip");
         }else if(gamepad2.b){
-            servo1.setPosition(0.5);
+            servo1.setPosition(0.6);
             telemetry.addLine("90");
         }
 
         if(gamepad2.right_bumper){
             garra.setPosition(0.6);
-            /*claw.setTargetPosition(100);
-            claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-
-             */
 
         }else{
             garra.setPosition(0);
-            /*claw.setTargetPosition(0);
-            claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-             */
         }
 
 
