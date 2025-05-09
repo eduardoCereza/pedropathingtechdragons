@@ -24,8 +24,8 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class autoAribaClip extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(0.65);
-        rightS.setPosition(0.65);
+        leftS.setPosition(0.85);
+        rightS.setPosition(0.85);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
@@ -39,29 +39,35 @@ public class autoAribaClip extends OpMode {
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.85);
-        rightS.setPosition(0.85);
+        leftS.setPosition(0.54);
+        rightS.setPosition(0.54);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
     }
     public void closed(){
-        garra.setPosition(0.0);
+        //garra.setPosition(0.0);
+        claw.setTargetPosition(0);
+        claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        claw.setPower(1.0);
         isopen = 0;
     }
     public void open(){
-        garra.setPosition(0.5);
+        claw.setTargetPosition(100);
+        claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+        claw.setPower(-1.0);
+        //garra.setPosition(0.5);
         isopen = 1;
     }
     public void subir(int target){
 
-        while (Right.getCurrentPosition() >= target){
+        while (Left.getCurrentPosition() >= target){
 
-            Left.setTargetPosition(-target);
-            Right.setTargetPosition(target);
+            Left.setTargetPosition(target);
+            Right.setTargetPosition(-target);
 
-            Left.setPower(0.5);
-            Right.setPower(0.5);
+            Left.setPower(0.8);
+            Right.setPower(0.8);
             holdArm = 0;
         }
         Left.setPower(0.0);
@@ -70,13 +76,13 @@ public class autoAribaClip extends OpMode {
     }
     public void descer(int target){
 
-        while (Right.getCurrentPosition() <= target){
+        while (Left.getCurrentPosition() <= target){
 
-            Left.setTargetPosition(target);
-            Right.setTargetPosition(-target);
+            Left.setTargetPosition(-target);
+            Right.setTargetPosition(target);
 
-            Left.setPower(-0.2);
-            Right.setPower(-0.2);
+            Left.setPower(-0.3);
+            Right.setPower(-0.3);
             holdArm = 0;
         }
         Left.setPower(0.0);
@@ -141,7 +147,7 @@ public class autoAribaClip extends OpMode {
     int holdSlide;
     int holdArm;
     Pose pose;
-    private DcMotorEx slide, Left, Right;
+    private DcMotorEx slide, Left, Right, claw;
     private Servo garra; //servo da garra/ponta
     private Servo leftS, rightS;
     private Follower follower; //sla tbm
@@ -149,20 +155,20 @@ public class autoAribaClip extends OpMode {
     private int pathState; //variável de controle das trajetórias e ações
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
-    private final Pose startPose = new Pose(0, 71, Math.toRadians(180)); //posição inicial do robô
-    private final Pose ClipPose = new Pose(23.2, 71, Math.toRadians(180));
-    private final Pose Control1 = new Pose(6, 20, Math.toRadians(180));
-    private final Pose move2 = new Pose(49, 33, Math.toRadians(180)); //vai para frente
-    private final Pose move3 = new Pose(49, 15, Math.toRadians(180));
-    private final Pose move4 = new Pose(6, 15, Math.toRadians(180)); //empurra o sample para o jogador humano
-    private final Pose move5 = new Pose(49,5, Math.toRadians(180));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(7, 5, Math.toRadians(180)); //empurra o segundo sample para a área do jogador humano
-    private final Pose control2 = new Pose(10, 70, Math.toRadians(180));
-    private final Pose clip2 = new Pose(23, 75, Math.toRadians(180));
-    private final Pose moveX = new Pose(26, 75, Math.toRadians(180));
-    private final Pose move7 = new Pose(10, 30, Math.toRadians(180));
-    private final Pose move8 = new Pose(5, 30, Math.toRadians(180));
-    private final Pose clip3 = new Pose(22, 90, Math.toRadians(180));
+    private final Pose startPose = new Pose(0, 71, Math.toRadians(180.00)); //posição inicial do robô
+    private final Pose ClipPose = new Pose(22.4, 71, Math.toRadians(180.00));
+    private final Pose Control1 = new Pose(6, 20, Math.toRadians(180.00));
+    private final Pose move2 = new Pose(49, 33, Math.toRadians(180.00)); //vai para frente
+    private final Pose move3 = new Pose(49, 15, Math.toRadians(180.00));
+    private final Pose move4 = new Pose(7.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
+    private final Pose move5 = new Pose(49,5, Math.toRadians(180.00));// vai para a direita na frente do segundo sample
+    private final Pose move6 = new Pose(4.8, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
+    private final Pose control2 = new Pose(10, 70, Math.toRadians(180.00));
+    private final Pose clip2 = new Pose(23, 75, Math.toRadians(180.00));
+    private final Pose moveX = new Pose(28, 75, Math.toRadians(180.00));
+    private final Pose move7 = new Pose(10, 30, Math.toRadians(180.00));
+    private final Pose move8 = new Pose(2, 30, Math.toRadians(180.00));
+    private final Pose clip3 = new Pose(22, 90, Math.toRadians(180.00));
     private PathChain traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
 
     public void buildPaths() {
@@ -170,44 +176,44 @@ public class autoAribaClip extends OpMode {
         traj1 = follower.pathBuilder()
                 //vai para frente para clipar
                 .addPath(new BezierLine(new Point(startPose), new Point(ClipPose)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
 
         traj2 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(ClipPose), new Point(Control1), new Point(move2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(move2), new Point(move3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(move3), new Point(move4)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(move4), new Point(move3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
 
         traj3 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move3), new Point(move5)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(move5), new Point(move6)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
 
         traj4 = follower.pathBuilder()
                 .addPath(new BezierCurve(new Point(move6), new Point(control2), new Point(clip2)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(clip2), new Point(moveX)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
 
         traj5 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(moveX), new Point(move7)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .addPath(new BezierLine(new Point(move7), new Point(move8)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
 
         traj6 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move8), new Point(clip3)))
-                .setConstantHeadingInterpolation(Math.toRadians(180))
+                .setConstantHeadingInterpolation(Math.toRadians(180.00))
                 .build();
     }
 
@@ -215,12 +221,10 @@ public class autoAribaClip extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                closed();
-                subir(-650);
-                closed();
-                extender(-1150);
-                closed();
                 follower.followPath(traj1, 0.4, false);
+                closed();
+                subir(-620);
+                extender(-1150);
                 setPathState(1);
                 
                 break;
@@ -242,7 +246,7 @@ public class autoAribaClip extends OpMode {
                 break;
             case 2:
                 if (!follower.isBusy() && pathState ==2){
-                    follower.followPath(traj3, 0.75, false);
+                    follower.followPath(traj3, 0.6, false);
                     setPathState(3);//
                 }
                 break;
@@ -255,7 +259,7 @@ public class autoAribaClip extends OpMode {
                 break;
             case 4:
                 if(num == 2 && garra.getPosition() == 0.0){
-                    subir(-650);
+                    subir(-630);
                     follower.followPath(traj4, 0.6, false);
                     clipPos();
                     extender(-1250);
@@ -282,15 +286,15 @@ public class autoAribaClip extends OpMode {
             case 7:
                 if (!follower.isBusy() && pathState == 7){
                     closed();
-                    subir(-650);
                     setPathState(8);
                 }
                 break;
             case 8:
-                follower.followPath(traj6, 0.9, false);
+                Left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                subir(-650);
                 clipPos();
                 extender(-1150);
-
+                follower.followPath(traj6, 0.9, false);
                 break;
             case 9:
                 if(!follower.isBusy() && pathState == 8){
@@ -323,6 +327,8 @@ public class autoAribaClip extends OpMode {
         telemetry.addData("pos", slide.getCurrentPosition());
         telemetry.addData("state", holdSlide);
         telemetry.addData("state arm", holdArm);
+        telemetry.addData("poss", slide.getCurrentPosition());
+        telemetry.addData("claw", claw.getCurrentPosition());
         telemetry.update();
 
         pose = follower.getPose();
@@ -337,7 +343,9 @@ public class autoAribaClip extends OpMode {
         }
 
         if (isopen == 0){
-            garra.setPosition(0);
+            //garra.setPosition(0);
+            claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+            claw.setPower(1.0);
         }
         if (clippos == 1){
             leftS.setPosition(0.85);
@@ -377,8 +385,11 @@ public class autoAribaClip extends OpMode {
         garra = hardwareMap.get(Servo.class, "garra");
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
+        claw = hardwareMap.get(DcMotorEx.class, "claw");
 
         leftS.setDirection(Servo.Direction.REVERSE);
+
+        claw.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         Left.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
@@ -386,6 +397,7 @@ public class autoAribaClip extends OpMode {
         opmodeTimer.resetTimer();
 
         slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        slide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
 
         Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
