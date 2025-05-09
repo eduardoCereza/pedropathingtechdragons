@@ -148,7 +148,7 @@ public class AutoAribaCesta extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(180));//posição inicial do robô
 
-    private final Pose move0 = new Pose(-5, 20, Math.toRadians(180));
+    private final Pose move0 = new Pose(-20, 30, Math.toRadians(180));
     private final Pose move1 = new Pose(-10, 20, Math.toRadians(180));
     private final Pose move2 = new Pose(-5, 20, Math.toRadians(180));
     private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(180));
@@ -206,22 +206,24 @@ public class AutoAribaCesta extends OpMode {
             case 0:
                 //tras
                 //subir atuador e ir para o ponto para colocar o specimen na sexta
-                subir(-650);
-                follower.followPath(traj0, 1,true);
-                pathState = 1;
+                follower.followPath(traj0, 0.5,true);
+                setPathState(1);
                 break;
             case 1:
                 //atuador
-                //posição servo para cesta
-                clipPos();
-                //extender slide
-                extender(-3000);
-                //abrir garra
-                open();
-                //recua o slide
-                recuar(0);
-                //desce a base do atuador
-                descer(0);
+                if(!follower.isBusy() && pathState == 1) {
+                    subir(-620);
+                    //posição servo para cesta
+                    clipPos();
+                    //extender slide
+                    extender(-3000);
+                    //abrir garra
+                    open();
+                    //recua o slide
+                    recuar(0);
+                    //desce a base do atuador
+                    descer(0);
+                }
                 pathState = 2;
                 break;
                 /*
