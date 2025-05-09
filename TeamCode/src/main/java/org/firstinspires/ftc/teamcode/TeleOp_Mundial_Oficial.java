@@ -193,8 +193,7 @@ public class TeleOp_Mundial_Oficial extends OpMode {
             servo1.setPosition(0.5);
             telemetry.addLine("90");
         }
-
-
+        
         if(gamepad2.right_bumper){
             //garra.setPosition(0.6);
             claw.setTargetPosition(100);
