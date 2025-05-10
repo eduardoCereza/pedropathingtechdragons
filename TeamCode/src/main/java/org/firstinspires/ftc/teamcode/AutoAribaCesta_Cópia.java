@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Cesta México Oficial")
-public class AutoAribaCesta extends OpMode {
+@Autonomous(name = "Cesta México Oficial - Cópia")
+public class AutoAribaCesta_Cópia extends OpMode {
 
     public void clipPos(){
         servo.setPosition(0.95);
@@ -177,13 +177,13 @@ public class AutoAribaCesta extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(5, 151, Math.toRadians(0));
+    private final Pose move0 = new Pose(38, 132, Math.toRadians(-90.00));
     private final Pose move1 = new Pose(30, 110, Math.toRadians(0));
-    private final Pose move2 = new Pose(-5, 20, Math.toRadians(0));
-    private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(0));
-    private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(0));
-    private final Pose move5 = new Pose(31.220, 133.742, Math.toRadians(0));
-    private final Pose move6 = new Pose(93.438, 81.783, Math.toRadians(0));
+    private final Pose move2 = new Pose(-5, 20, Math.toRadians(180));
+    private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(180));
+    private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(180));
+    private final Pose move5 = new Pose(31.220, 133.742, Math.toRadians(180));
+    private final Pose move6 = new Pose(93.438, 81.783, Math.toRadians(180));
 
 
     private PathChain traj0, traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
@@ -193,7 +193,7 @@ public class AutoAribaCesta extends OpMode {
         traj0 = follower.pathBuilder()
                 //vai até o a cesta para colocar o specimen amarelo que já esta no robo
                 .addPath(new BezierLine(new Point(startPose), new Point(move0)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .setLinearHeadingInterpolation(Math.toRadians(0),Math.toRadians(-90.00))
                 .build();
 
 
@@ -237,33 +237,30 @@ public class AutoAribaCesta extends OpMode {
     }
 
     //dependendo de como funcionar a movimentação do atuador, esses cases vão precisar ser dividos e dividir as trajetórias neles, testar antes
-    public void autonomousPathUpdate(){
+    public void autonomousPathUpdate() {
         switch (pathState) {
             //faz a trajetória
             case 0:
-                pickPos();
                 subir(650);
                 follower.followPath(traj0, 1,true);
                 setPathState(1);
                 break;
-
             case 1:
+
+
                 if (!follower.isBusy() && pathState == 1){
-                    extender(-3300);
-                    pickPos();
+                    specimenPickpos();
+                    extender(-3600);
                     num = 1;
 
-                    if( num == 1) {
-                        clipPos();
-                        open();
-                        recuar(0);
-                        descer(0);
-                        setPathState(2);
-
-                    }
+                }
+                if (num == 1){
+                    open();
+                    recuar(0);
+                    descer2(0);
+                    setPathState(2);
                 }
                 break;
-            case 2:
                 /*
             case 2:
                 //frente
@@ -408,7 +405,6 @@ public class AutoAribaCesta extends OpMode {
     @Override
     public void init() {
 
-        /*
         holdSlide = 0;
 
         holdArm = 1;
@@ -418,8 +414,6 @@ public class AutoAribaCesta extends OpMode {
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
-
-         */
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         servo = hardwareMap.get(Servo.class, "servo1");
@@ -440,6 +434,8 @@ public class AutoAribaCesta extends OpMode {
         Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         garra.setPosition(0);
+
+        servo.setPosition(0.5);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);

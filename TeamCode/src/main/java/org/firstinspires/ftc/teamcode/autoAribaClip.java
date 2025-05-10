@@ -226,7 +226,6 @@ public class autoAribaClip extends OpMode {
                 subir(-620);
                 extender(-1150);
                 setPathState(1);
-                
                 break;
 
             case 1:
