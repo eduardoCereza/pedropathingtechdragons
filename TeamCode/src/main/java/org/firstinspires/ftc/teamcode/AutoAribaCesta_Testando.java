@@ -267,7 +267,6 @@ public class AutoAribaCesta_Testando extends OpMode {
                 }
                 break;
             case 4:
-
                 follower.followPath(traj1, 0.3, true);
                 setPathState(5);
                 break;
@@ -286,9 +285,37 @@ public class AutoAribaCesta_Testando extends OpMode {
                 }
                 break;
             case 7:
+                subir(649);
                 follower.followPath(traj2, 1, true);
-                setPathState(-1);
+                setPathState(8);
                 break;
+            case 8:
+                if (!follower.isBusy() && pathState == 8) {
+                    extender(-3300);
+                    servo(1);
+                    pathTimer.resetTimer();
+                    setPathState(103);
+                }
+                break;
+            case 9:
+                if (!follower.isBusy() && pathState == 9) {
+                    open();
+                    open();
+                    servo(0);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy() && pathState == 10) {
+                    recuar(0);
+                    descer(0);
+                    pathTimer.resetTimer();
+                    setPathState(104);
+                }
+                break;
+            case 11:
+                break;
+
             case 101:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(2);
@@ -297,6 +324,16 @@ public class AutoAribaCesta_Testando extends OpMode {
             case 102:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(4);
+                }
+                break;
+            case 103:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(9);
+                }
+                break;
+            case 104:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(11);
                 }
                 break;
         }
