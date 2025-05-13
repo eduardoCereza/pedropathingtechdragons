@@ -153,12 +153,12 @@ public class autoAribaClip extends OpMode {
     private final Pose move3 = new Pose(49, 15, Math.toRadians(180.00));
     private final Pose move4 = new Pose(7.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
     private final Pose move5 = new Pose(49,5, Math.toRadians(180.00));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(8.2, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
+    private final Pose move6 = new Pose(6.2, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
     private final Pose control2 = new Pose(10, 70, Math.toRadians(180.00));
     private final Pose clip2 = new Pose(23, 75, Math.toRadians(180.00));
     private final Pose moveX = new Pose(29, 75, Math.toRadians(180.00));
     private final Pose move7 = new Pose(14, 30, Math.toRadians(180.00));
-    private final Pose move8 = new Pose(2, 30, Math.toRadians(180.00));
+    private final Pose move8 = new Pose(6.2, 30, Math.toRadians(180.00));
     private final Pose clip3 = new Pose(22, 90, Math.toRadians(180.00));
     private PathChain traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
 
@@ -211,8 +211,9 @@ public class autoAribaClip extends OpMode {
     //dependendo de como funcionar a movimentação do atuador, esses cases vão precisar ser dividos e dividir as trajetórias neles, testar antes
     public void autonomousPathUpdate() {
         switch (pathState) {
+            //0.4
             case 0:
-                follower.followPath(traj1, 0.4, false);
+                follower.followPath(traj1, 0.6, false);
                 closed();
                 subir(-620);
                 extender(-1170);
@@ -230,13 +231,15 @@ public class autoAribaClip extends OpMode {
                     recuar(-250);
                     descer(-10);
                     specimenPickpos();
-                    follower.followPath(traj2, 0.75, false);
+                    //0.75
+                    follower.followPath(traj2, 1.0, false);
                     setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy() && pathState ==2){
-                    follower.followPath(traj3, 0.6, false);
+                    //0.6
+                    follower.followPath(traj3, 0.8, false);
                     setPathState(3);//
                 }
                 break;
@@ -251,7 +254,8 @@ public class autoAribaClip extends OpMode {
             case 4:
                 if(num == 2 && garra.getPosition() == 0.0){
                     subir(-630);
-                    follower.followPath(traj4, 0.6, false);
+                    //0.6
+                    follower.followPath(traj4, 0.8, false);
                     clipPos();
                     extender(-1250);
                     setPathState(5);
@@ -268,7 +272,8 @@ public class autoAribaClip extends OpMode {
                 }
                 break;
             case 6:
-                follower.followPath(traj5, 0.9, false);
+                //0.9
+                follower.followPath(traj5, 1.0, false);
                 setPathState(7);
 
                 break;
@@ -280,7 +285,8 @@ public class autoAribaClip extends OpMode {
                 break;
             case 8:
                 subir(-650);
-                follower.followPath(traj6, 0.9, false);
+                //0.9
+                follower.followPath(traj6, 1.0, false);
                 clipPos();
                 extender(-1150);
                 setPathState(9);
@@ -319,10 +325,8 @@ public class autoAribaClip extends OpMode {
         telemetry.addData("x", follower.getPose().getX());
         telemetry.addData("y", follower.getPose().getY());
         telemetry.addData("heading", follower.getPose().getHeading());
-        telemetry.addData("pos", slide.getCurrentPosition());
-        telemetry.addData("state", holdSlide);
-        telemetry.addData("state arm", holdArm);
-        telemetry.addData("poss", slide.getCurrentPosition());
+        telemetry.addData("braço left", Left.getCurrentPosition());
+        telemetry.addData("slide position", slide.getCurrentPosition());
         telemetry.update();
 
         pose = follower.getPose();
@@ -419,5 +423,12 @@ public class autoAribaClip extends OpMode {
         clippos = 0;
         pickpos = 0;
         specimenpickpos = 0;
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y", follower.getPose().getY());
+        telemetry.addData("heading", follower.getPose().getHeading());
+        telemetry.addData("braço left", Left.getCurrentPosition());
+        telemetry.addData("slide position", slide.getCurrentPosition());
+        telemetry.update();
     }
 }

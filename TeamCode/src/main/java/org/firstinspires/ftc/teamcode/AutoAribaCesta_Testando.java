@@ -169,9 +169,9 @@ public class AutoAribaCesta_Testando extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(6, 151, Math.toRadians(0));
-    private final Pose move1 = new Pose(6, 147, Math.toRadians(0));
-    private final Pose move2 = new Pose(6, 151, Math.toRadians(0));
+    private final Pose move0 = new Pose(7, 151, Math.toRadians(0));
+    private final Pose move1 = new Pose(7, 147, Math.toRadians(0));
+    private final Pose move2 = new Pose(7, 151, Math.toRadians(0));
     //mudar
     private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(0));
     private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(0));
