@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Cesta México Oficial")
-public class AutoAribaCesta extends OpMode {
+@Autonomous(name = "Cesta México Oficial - Testando")
+public class AutoAribaCesta_Testando extends OpMode {
 
     public void clipPos(){
         servo.setPosition(0.95);
@@ -50,7 +50,7 @@ public class AutoAribaCesta extends OpMode {
         isopen = 0;
     }
     public void open(){
-        garra.setPosition(0.5);
+        garra.setPosition(0.6);
         isopen = 1;
     }
     public void subir(int target){
@@ -65,14 +65,17 @@ public class AutoAribaCesta extends OpMode {
             Right.setPower(0.5);
             holdArm = 0;
         }
+        /*
         Left.setTargetPosition(Left.getCurrentPosition());
         Right.setTargetPosition(Right.getCurrentPosition());
 
         Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        Left.setPower(1);
-        Right.setPower(1);
+         */
+
+        Left.setPower(0);
+        Right.setPower(0);
         holdArm =1;
     }
     public void descer(int target){
@@ -93,7 +96,7 @@ public class AutoAribaCesta extends OpMode {
     public void hold(){
 
         PIDFController controller;
-/*
+
         double minPower = 0.4;
         double maxPower = 1.0;
         controller = new PIDFController(12, 4, 5, 13);
@@ -103,7 +106,7 @@ public class AutoAribaCesta extends OpMode {
         double powerM = maxPower + controller.getComputedOutput(Left.getCurrentPosition());
         double powerM1 = maxPower + controller.getComputedOutput(Right.getCurrentPosition());
 
- */
+ /*
 
         Left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -114,8 +117,10 @@ public class AutoAribaCesta extends OpMode {
         Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        Left.setPower(1);
-        Right.setPower(1);
+  */
+
+        Left.setPower(powerM);
+        Right.setPower(powerM1);
 
     }
     public void extender(int target){
@@ -164,9 +169,9 @@ public class AutoAribaCesta extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(10, 151, Math.toRadians(0));
-    private final Pose move1 = new Pose(8, 151, Math.toRadians(0));
-    private final Pose move2 = new Pose(8, 140, Math.toRadians(0));
+    private final Pose move0 = new Pose(6, 151, Math.toRadians(0));
+    private final Pose move1 = new Pose(6, 147, Math.toRadians(0));
+    private final Pose move2 = new Pose(6, 151, Math.toRadians(0));
     //mudar
     private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(0));
     private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(0));
@@ -201,7 +206,7 @@ public class AutoAribaCesta extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
-                //vai para tras
+        //vai para tras
         traj4 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move3), new Point(move4)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -212,7 +217,7 @@ public class AutoAribaCesta extends OpMode {
                 .setTangentHeadingInterpolation()
                 .build();
 
-                //vai para tras
+        //vai para tras
         traj6 = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(move5), new Point(move6)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
@@ -231,7 +236,7 @@ public class AutoAribaCesta extends OpMode {
             case 0:
                 //pickPos();
                 servo(0);
-                subir(650);
+                subir(649);
                 follower.followPath(traj0, 1, true);
                 setPathState(1);
                 break;
@@ -239,121 +244,98 @@ public class AutoAribaCesta extends OpMode {
                 if (!follower.isBusy() && pathState == 1) {
                     extender(-3300);
                     servo(1);
-                    setPathState(2);
+                    pathTimer.resetTimer();
+                    setPathState(101);
+                }
+                break;
+            case 2:
+                if (!follower.isBusy() && pathState == 2) {
+                    open();
+                    open();
+                    servo(0);
+                    setPathState(3);
                 }
                 break;
 
-                case 2:
-                follower.followPath(traj1, 1, true);
-                setPathState(3);
-                break;
             case 3:
-                if(!follower.isBusy() && pathState == 3){
-                    open();
-                    setPathState(4);
+                if (!follower.isBusy() && pathState == 3) {
+                    recuar(0);
+                    descer(0);
+                    pathTimer.resetTimer();
+                    setPathState(102);
+
                 }
                 break;
             case 4:
-                servo.setPosition(0);
-                recuar(0);
-                descer(0);
+                follower.followPath(traj1, 0.3, true);
                 setPathState(5);
                 break;
             case 5:
-                follower.followPath(traj2, 1, false);
+                if(!follower.isBusy() && pathState == 5){
+                extender(-1500);
+                closed();
                 setPathState(6);
-                break;
-            case 6:
-                extender(-1000);
-                closed();
-                setPathState(-1);
-                break;
-            case -1:
-                break;
-            /*case 3:
-                //pegar
-                extender(-1500);
-                closed();
-                recuar(0);
-                pathState = 4;
-                break;
-            case 4:
-                //tras
-                follower.followPath(traj2, 1, true);
-                pathState = 5;
-                break;
-            case 5:
-                //colocar
-                clipPos();
-                subir(-650);
-                extender(-1800);
-                open();
-                specimenPickpos();
-                recuar(0);
-                descer(0);
-                pathState = 6;
-                break;
-            case 6:
-                //frente
-                follower.followPath(traj3, 1, true);
-                pathState = 7;
-                break;
-            case 7:
-                //pegar
-                extender(-1500);
-                closed();
-                recuar(0);
-                pathState = 8;
-            case 8:
-                //tras
-                follower.followPath(traj4, 1,  true);
-                pathState = 9;
-                break;
-            case 9:
-                //colocar
-                clipPos();
-                subir(-650);
-                extender(-1800);
-                open();
-                specimenPickpos();
-                recuar(0);
-                descer(0);
-                pathState = 10;
-                break;
-            case 10:
-                //frente
-                follower.followPath(traj5, 1, true);
-                pathState = 11;
-                break;
-            case 11:
-                //pegar
-                extender(-1500);
-                closed();
-                recuar(0);
-                pathState = 12;
-                break;
-            case 12:
-                //tras
-                follower.followPath(traj6, 1, true);
-                pathState = 13;
-                break;
-            case 13:
-                //colocar
-                clipPos();
-                subir(-650);
-                extender(-1800);
-                open();
-                specimenPickpos();
-                recuar(0);
-                descer(0);
-                pathState = 14;
-                break;
-            case 14:
-                //end
-                follower.followPath(traj7, 1, true);
+            }
                 break;
 
-                 */
+            case 6:
+                if (!follower.isBusy() && pathState == 6) {
+                    recuar(0);
+                    setPathState(7);
+                }
+                break;
+            case 7:
+                subir(649);
+                follower.followPath(traj2, 1, true);
+                setPathState(8);
+                break;
+            case 8:
+                if (!follower.isBusy() && pathState == 8) {
+                    extender(-3300);
+                    servo(1);
+                    pathTimer.resetTimer();
+                    setPathState(103);
+                }
+                break;
+            case 9:
+                if (!follower.isBusy() && pathState == 9) {
+                    open();
+                    open();
+                    servo(0);
+                    setPathState(10);
+                }
+                break;
+            case 10:
+                if (!follower.isBusy() && pathState == 10) {
+                    recuar(0);
+                    descer(0);
+                    pathTimer.resetTimer();
+                    setPathState(104);
+                }
+                break;
+            case 11:
+                break;
+
+            case 101:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(2);
+                }
+                break;
+            case 102:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(4);
+                }
+                break;
+            case 103:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(9);
+                }
+                break;
+            case 104:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(11);
+                }
+                break;
         }
     }
     //controle das trajetórias
