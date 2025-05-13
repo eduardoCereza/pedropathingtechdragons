@@ -24,39 +24,30 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
 public class autoAribaClip extends OpMode {
 
     public void clipPos(){
-        leftS.setPosition(0.85);
-        rightS.setPosition(0.85);
+        servo.setPosition(0.95);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
     }
     public void pickPos(){
-        leftS.setPosition(0.0);
-        rightS.setPosition(0.0);
+        servo.setPosition(0.0);
         clippos = 0;
         pickpos = 1;
         specimenpickpos = 0;
 
     }
     public void specimenPickpos(){
-        leftS.setPosition(0.54);
-        rightS.setPosition(0.54);
+        servo.setPosition(0.45);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
     }
     public void closed(){
-        //garra.setPosition(0.0);
-        claw.setTargetPosition(0);
-        claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        claw.setPower(1.0);
+        garra.setPosition(0.0);
         isopen = 0;
     }
     public void open(){
-        claw.setTargetPosition(100);
-        claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        claw.setPower(-1.0);
-        //garra.setPosition(0.5);
+        garra.setPosition(0.6);
         isopen = 1;
     }
     public void subir(int target){
@@ -147,9 +138,9 @@ public class autoAribaClip extends OpMode {
     int holdSlide;
     int holdArm;
     Pose pose;
-    private DcMotorEx slide, Left, Right, claw;
+    private DcMotorEx slide, Left, Right;
     private Servo garra; //servo da garra/ponta
-    private Servo leftS, rightS;
+    private Servo servo;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código
     private int pathState; //variável de controle das trajetórias e ações
@@ -162,11 +153,11 @@ public class autoAribaClip extends OpMode {
     private final Pose move3 = new Pose(49, 15, Math.toRadians(180.00));
     private final Pose move4 = new Pose(7.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
     private final Pose move5 = new Pose(49,5, Math.toRadians(180.00));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(4.8, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
+    private final Pose move6 = new Pose(8.2, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
     private final Pose control2 = new Pose(10, 70, Math.toRadians(180.00));
     private final Pose clip2 = new Pose(23, 75, Math.toRadians(180.00));
-    private final Pose moveX = new Pose(28, 75, Math.toRadians(180.00));
-    private final Pose move7 = new Pose(10, 30, Math.toRadians(180.00));
+    private final Pose moveX = new Pose(29, 75, Math.toRadians(180.00));
+    private final Pose move7 = new Pose(14, 30, Math.toRadians(180.00));
     private final Pose move8 = new Pose(2, 30, Math.toRadians(180.00));
     private final Pose clip3 = new Pose(22, 90, Math.toRadians(180.00));
     private PathChain traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
@@ -224,7 +215,7 @@ public class autoAribaClip extends OpMode {
                 follower.followPath(traj1, 0.4, false);
                 closed();
                 subir(-620);
-                extender(-1150);
+                extender(-1170);
                 setPathState(1);
                 break;
 
@@ -237,7 +228,7 @@ public class autoAribaClip extends OpMode {
                 if (num == 1){
                     //mudar
                     recuar(-250);
-                    descer(0);
+                    descer(-10);
                     specimenPickpos();
                     follower.followPath(traj2, 0.75, false);
                     setPathState(2);
@@ -253,7 +244,8 @@ public class autoAribaClip extends OpMode {
                 if(!follower.isBusy() && pathState == 3){
                     closed();
                     num = 2;
-                    setPathState(4);
+                    pathTimer.resetTimer();
+                    setPathState(101);
                 }
                 break;
             case 4:
@@ -269,42 +261,46 @@ public class autoAribaClip extends OpMode {
                 if (!follower.isBusy() && pathState == 5){
                     extender(-2000);
                     open();
+                    recuar(-100);
+                    descer(-10);
+                    specimenPickpos();
                     setPathState(6);
                 }
                 break;
             case 6:
-                if ((!follower.isBusy() && pathState == 6)){
-                    recuar(-100);
-                    descer(0);
-                    specimenPickpos();
-                    follower.followPath(traj5, 0.9, false);
-                }
-                    setPathState(7);
+                follower.followPath(traj5, 0.9, false);
+                setPathState(7);
 
                 break;
             case 7:
                 if (!follower.isBusy() && pathState == 7){
                     closed();
-                    setPathState(8);
+                    setPathState(102);
                 }
                 break;
             case 8:
-                Left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
                 subir(-650);
+                follower.followPath(traj6, 0.9, false);
                 clipPos();
                 extender(-1150);
-                follower.followPath(traj6, 0.9, false);
+                setPathState(9);
                 break;
             case 9:
-                if(!follower.isBusy() && pathState == 8){
-                    extender(-1700);
-                    open();
-                    setPathState(9);
-                }
                 if(!follower.isBusy() && pathState == 9){
+                    extender(-1900);
+                    open();
                     recuar(-100);
                     descer(0);
+                }
                     //estaciona
+
+            case 101:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(4);
+                }
+            case 102:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(8);
                 }
         }
     }
@@ -327,7 +323,6 @@ public class autoAribaClip extends OpMode {
         telemetry.addData("state", holdSlide);
         telemetry.addData("state arm", holdArm);
         telemetry.addData("poss", slide.getCurrentPosition());
-        telemetry.addData("claw", claw.getCurrentPosition());
         telemetry.update();
 
         pose = follower.getPose();
@@ -342,21 +337,16 @@ public class autoAribaClip extends OpMode {
         }
 
         if (isopen == 0){
-            //garra.setPosition(0);
-            claw.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-            claw.setPower(1.0);
+            garra.setPosition(0);
         }
         if (clippos == 1){
-            leftS.setPosition(0.85);
-            rightS.setPosition(0.85);
+            servo.setPosition(0.95);
         }
         if (pickpos == 1){
-            leftS.setPosition(0.0);
-            rightS.setPosition(0.0);
+            servo.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            leftS.setPosition(0.5);
-            rightS.setPosition(0.5);
+            servo.setPosition(0.45);
         }
 
         follower.update();
@@ -379,16 +369,12 @@ public class autoAribaClip extends OpMode {
         specimenpickpos = 0;
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
-        leftS = hardwareMap.get(Servo.class, "servo2");
-        rightS = hardwareMap.get(Servo.class, "servo1");
-        garra = hardwareMap.get(Servo.class, "garra");
+        servo = hardwareMap.get(Servo.class, "servo1");
         Left = hardwareMap.get(DcMotorEx.class, "armmotorleft");
         Right = hardwareMap.get(DcMotorEx.class, "armmotorright");
-        claw = hardwareMap.get(DcMotorEx.class, "claw");
+        garra = hardwareMap.get(Servo.class, "garra");
 
-        leftS.setDirection(Servo.Direction.REVERSE);
-
-        claw.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        servo.setDirection(Servo.Direction.REVERSE);
 
         Left.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
@@ -403,8 +389,7 @@ public class autoAribaClip extends OpMode {
 
         garra.setPosition(0);
 
-        rightS.setPosition(1.0);
-        leftS.setPosition(1.0);
+        servo.setPosition(0.95);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
