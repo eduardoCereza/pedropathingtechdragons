@@ -18,6 +18,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
+import java.lang.annotation.Target;
+
 
 @Autonomous(name = "Cesta México Oficial - Testando")
 public class AutoAribaCesta_Testando extends OpMode {
@@ -65,18 +67,10 @@ public class AutoAribaCesta_Testando extends OpMode {
             Right.setPower(0.5);
             holdArm = 0;
         }
-        /*
-        Left.setTargetPosition(Left.getCurrentPosition());
-        Right.setTargetPosition(Right.getCurrentPosition());
-
-        Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-         */
 
         Left.setPower(0);
         Right.setPower(0);
-        holdArm =1;
+        //holdArm =1;
     }
     public void descer(int target){
 
@@ -87,12 +81,13 @@ public class AutoAribaCesta_Testando extends OpMode {
 
             Left.setPower(-0.4);
             Right.setPower(-0.4);
-            holdArm = 0;
+            //holdArm = 0;
         }
         Left.setPower(0.0);
         Right.setPower(0.0);
-        holdArm = 1;
+        //holdArm = 1;
     }
+
     public void hold(){
 
         PIDFController controller;
@@ -106,10 +101,12 @@ public class AutoAribaCesta_Testando extends OpMode {
         double powerM = maxPower + controller.getComputedOutput(Left.getCurrentPosition());
         double powerM1 = maxPower + controller.getComputedOutput(Right.getCurrentPosition());
 
- /*
+
+        /*
 
         Left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         Right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         Left.setTargetPosition(Left.getCurrentPosition());
         Right.setTargetPosition(Right.getCurrentPosition());
@@ -117,7 +114,8 @@ public class AutoAribaCesta_Testando extends OpMode {
         Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-  */
+         */
+
 
         Left.setPower(powerM);
         Right.setPower(powerM1);
@@ -234,7 +232,6 @@ public class AutoAribaCesta_Testando extends OpMode {
         switch (pathState) {
             //faz a trajetória
             case 0:
-                //pickPos();
                 servo(0);
                 subir(649);
                 follower.followPath(traj0, 1, true);
@@ -260,19 +257,18 @@ public class AutoAribaCesta_Testando extends OpMode {
             case 3:
                 if (!follower.isBusy() && pathState == 3) {
                     recuar(0);
-                    descer(0);
-                    pathTimer.resetTimer();
-                    setPathState(102);
-
+                    setPathState(4);
                 }
                 break;
             case 4:
                 follower.followPath(traj1, 0.3, true);
+                descer(0);
                 setPathState(5);
                 break;
+
             case 5:
                 if(!follower.isBusy() && pathState == 5){
-                extender(-1500);
+                extender(-1700);
                 closed();
                 setPathState(6);
             }
@@ -308,32 +304,25 @@ public class AutoAribaCesta_Testando extends OpMode {
             case 10:
                 if (!follower.isBusy() && pathState == 10) {
                     recuar(0);
-                    descer(0);
-                    pathTimer.resetTimer();
-                    setPathState(104);
+                    setPathState(11);
                 }
                 break;
             case 11:
+                if (!follower.isBusy() && pathState == 11) {
+                    descer(0);
+                    setPathState(-1);
+                }
                 break;
 
             case 101:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(2);
-                }
-                break;
-            case 102:
-                if(pathTimer.getElapsedTimeSeconds() > 1){
-                    setPathState(4);
+                    break;
                 }
                 break;
             case 103:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(9);
-                }
-                break;
-            case 104:
-                if(pathTimer.getElapsedTimeSeconds() > 1){
-                    setPathState(11);
                 }
                 break;
         }

@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Clip México Oficial")
-public class autoAribaClip extends OpMode {
+@Autonomous(name = "Clip México Cópia")
+public class autoAribaClip_CopiaNat extends OpMode {
 
     public void clipPos(){
         servo.setPosition(0.95);
@@ -80,20 +80,6 @@ public class autoAribaClip extends OpMode {
         Right.setPower(0.0);
         holdArm = 1;
     }
-
-    public void moverArm(int target){
-        Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        Left.setTargetPosition(-target);
-        Right.setTargetPosition(target);
-
-        Left.setPower(-0.6);
-        Right.setPower(-0.6);
-
-        holdArm = 1;
-    }
-
     public void hold(){
 
         PIDFController controller;
@@ -161,16 +147,16 @@ public class autoAribaClip extends OpMode {
     // y = lados (se for maior vai para a direita)
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 71, Math.toRadians(180.00)); //posição inicial do robô
-    private final Pose ClipPose = new Pose(21, 71, Math.toRadians(180.00));
+    private final Pose ClipPose = new Pose(22.4, 71, Math.toRadians(180.00));
     private final Pose Control1 = new Pose(6, 20, Math.toRadians(180.00));
     private final Pose move2 = new Pose(49, 33, Math.toRadians(180.00)); //vai para frente
     private final Pose move3 = new Pose(49, 15, Math.toRadians(180.00));
     private final Pose move4 = new Pose(7.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
     private final Pose move5 = new Pose(49,5, Math.toRadians(180.00));// vai para a direita na frente do segundo sample
-    private final Pose move6 = new Pose(4.5, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
+    private final Pose move6 = new Pose(6.55, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
     private final Pose control2 = new Pose(10, 70, Math.toRadians(180.00));
     private final Pose clip2 = new Pose(23, 75, Math.toRadians(180.00));
-    private final Pose moveX = new Pose(29, 75, Math.toRadians(180.00));
+    private final Pose moveX = new Pose(30, 75, Math.toRadians(180.00));
     private final Pose move7 = new Pose(14, 30, Math.toRadians(180.00));
     private final Pose move8 = new Pose(8, 30, Math.toRadians(180.00));
     private final Pose clip3 = new Pose(22, 90, Math.toRadians(180.00));
@@ -229,7 +215,7 @@ public class autoAribaClip extends OpMode {
             case 0:
                 follower.followPath(traj1, 0.4, false);
                 closed();
-                subir(-649);
+                subir(-650);
                 extender(-1200);
                 setPathState(1);
                 break;
@@ -246,20 +232,21 @@ public class autoAribaClip extends OpMode {
                     descer(-10);
                     specimenPickpos();
                     //0.75
-                    follower.followPath(traj2, 0.75, false);
-                    setPathState(105);
+                    follower.followPath(traj2, 1, false);
+                    setPathState(2);
                 }
                 break;
             case 2:
                 if (!follower.isBusy() && pathState ==2){
                     //0.6
-                    follower.followPath(traj3, 0.6, false);
+                    follower.followPath(traj3, 1, false);
                     setPathState(3);//
                 }
                 break;
             case 3:
                 if(!follower.isBusy() && pathState == 3){
                     closed();
+                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     num = 2;
                     pathTimer.resetTimer();
                     setPathState(101);
@@ -269,7 +256,7 @@ public class autoAribaClip extends OpMode {
                 if(num == 2 && garra.getPosition() == 0.0){
                     subir(-630);
                     //0.6
-                    follower.followPath(traj4, 0.6, false);
+                    follower.followPath(traj4, 1.0, false);
                     clipPos();
                     extender(-1150);
                     setPathState(5);
@@ -279,23 +266,13 @@ public class autoAribaClip extends OpMode {
                 if (!follower.isBusy() && pathState == 5){
                     extender(-2000);
                     open();
-                    num = 4;
-                }
-                if (num == 4){
                     recuar(-10);
-                   //descer(-10);
-                    if(slide.getCurrentPosition() == -10){
-                        descer(-10);
-                    }
-                    specimenPickpos();
-                    setPathState(6);
+                    descer(0);
+                    setPathState(103);
                 }
                 break;
             case 6:
-                //if(!follower.isBusy() && pathState == 6){
-                   // descer(-5);
-
-                //}
+                specimenPickpos();
                 follower.followPath(traj5, 0.9, false);
                 setPathState(7);
 
@@ -337,11 +314,6 @@ public class autoAribaClip extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 0.5){
                     setPathState(6);
                 }
-            case 105:
-                if(pathTimer.getElapsedTimeSeconds() > 3){
-                    setPathState(2);
-                }
-
         }
     }
 
