@@ -92,7 +92,7 @@ public class AutoAribaCesta_Testando extends OpMode {
 
         PIDFController controller;
 
-        double minPower = 0.4;
+        double minPower = 0.7;
         double maxPower = 1.0;
         controller = new PIDFController(12, 4, 5, 13);
         controller.setInputRange(-4000, 4000);
@@ -101,21 +101,11 @@ public class AutoAribaCesta_Testando extends OpMode {
         double powerM = maxPower + controller.getComputedOutput(Left.getCurrentPosition());
         double powerM1 = maxPower + controller.getComputedOutput(Right.getCurrentPosition());
 
-
-        /*
-
-        Left.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        Right.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-
         Left.setTargetPosition(Left.getCurrentPosition());
         Right.setTargetPosition(Right.getCurrentPosition());
 
         Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-         */
-
 
         Left.setPower(powerM);
         Right.setPower(powerM1);
@@ -167,19 +157,19 @@ public class AutoAribaCesta_Testando extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(7, 151, Math.toRadians(0));
-    private final Pose move1 = new Pose(7, 147, Math.toRadians(0));
-    private final Pose move2 = new Pose(7, 151, Math.toRadians(0));
-    //mudar
-    private final Pose move3 = new Pose(31.22, 125.5, Math.toRadians(0));
-    private final Pose move4 = new Pose(22.969, 131.289, Math.toRadians(0));
-    private final Pose move5 = new Pose(31.220, 133.742, Math.toRadians(0));
-    private final Pose move6 = new Pose(93.438, 81.783, Math.toRadians(0));
+    private final Pose move0 = new Pose(16, 153, Math.toRadians(0));
+    private final Pose move01 = new Pose(18, 157, Math.toRadians(0));
+    private final Pose move02 = new Pose(19, 163, Math.toRadians(0));
+
+    private final Pose move1 = new Pose(15, 147, Math.toRadians(0));
+    private final Pose move2 = new Pose(15, 140, Math.toRadians(0));
 
 
-    private PathChain traj0, traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
+    private PathChain traj0, traj1, traj2, traj3, traj4; //conjunto de trajetórias
 
     public void buildPaths() {
+
+        //sempre acerta
 
         traj0 = follower.pathBuilder()
                 //vai até o a cesta para colocar o specimen amarelo que já esta no robo
@@ -187,6 +177,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
+        //variavel
 
         traj1 = follower.pathBuilder()
                 //vai até o primeiro specimen amarelo
@@ -195,57 +186,42 @@ public class AutoAribaCesta_Testando extends OpMode {
                 .build();
 
         traj2 = follower.pathBuilder()//vai para trás
-                .addPath(new BezierLine(new Point(move1), new Point(move2)))
+                .addPath(new BezierLine(new Point(move1), new Point(move01)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
-//mudar
+        //mudar
         traj3 = follower.pathBuilder()//vai para o segundo specimen amarelo
-                .addPath(new BezierLine(new Point(move2), new Point(move3)))
+                .addPath(new BezierLine(new Point(move01), new Point(move2)))
+                .setConstantHeadingInterpolation(Math.toRadians(0))
+                .build();
+        traj4 = follower.pathBuilder()//vai para o segundo specimen amarelo
+                .addPath(new BezierLine(new Point(move2), new Point(move01)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
-        //vai para tras
-        traj4 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(move3), new Point(move4)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
-
-        traj5 = follower.pathBuilder()//vai para o último specimen amarelo
-                .addPath(new BezierLine(new Point(move4), new Point(move5)))
-                .setTangentHeadingInterpolation()
-                .build();
-
-        //vai para tras
-        traj6 = follower.pathBuilder()
-                .addPath(new BezierLine(new Point(move5), new Point(move6)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
-
-        traj7 = follower.pathBuilder()//vai para a area de pontuacao
-                .addPath(new BezierLine(new Point(move6), new Point(move6)))
-                .setConstantHeadingInterpolation(Math.toRadians(0))
-                .build();
     }
 
     //dependendo de como funcionar a movimentação do atuador, esses cases vão precisar ser dividos e dividir as trajetórias neles, testar antes
     public void autonomousPathUpdate(){
         switch (pathState) {
             //faz a trajetória
-            case 0:
+
+            //TODO: primeiro
+            case 0: //certo
                 servo(0);
-                subir(649);
                 follower.followPath(traj0, 1, true);
                 setPathState(1);
                 break;
-            case 1:
+            case 1: //certo
                 if (!follower.isBusy() && pathState == 1) {
-                    extender(-3300);
+                    subir(670);
+                    extender(-3100);
                     servo(1);
                     pathTimer.resetTimer();
                     setPathState(101);
                 }
                 break;
-            case 2:
+            case 2: //certo
                 if (!follower.isBusy() && pathState == 2) {
                     open();
                     open();
@@ -254,75 +230,152 @@ public class AutoAribaCesta_Testando extends OpMode {
                 }
                 break;
 
-            case 3:
+            case 3: //certo
                 if (!follower.isBusy() && pathState == 3) {
                     recuar(0);
+                    descer(0);
+                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     setPathState(4);
                 }
                 break;
-            case 4:
+
+                //TODO: segundo
+            case 4: //certo
                 follower.followPath(traj1, 0.3, true);
-                descer(0);
                 setPathState(5);
                 break;
-
-            case 5:
+            case 5://certo
                 if(!follower.isBusy() && pathState == 5){
-                extender(-1700);
-                closed();
+                extender(-2000);
+                open();
+                //pathTimer.resetTimer();
                 setPathState(6);
             }
                 break;
-
-            case 6:
-                if (!follower.isBusy() && pathState == 6) {
-                    recuar(0);
+            case 6://certo
+                if(!follower.isBusy() && pathState == 6){
+                    closed();
+                    closed();
                     setPathState(7);
                 }
                 break;
             case 7:
-                subir(649);
-                follower.followPath(traj2, 1, true);
-                setPathState(8);
+                if (!follower.isBusy() && pathState == 7) {
+                    recuar(0);
+                    setPathState(8);
+                }
                 break;
-            case 8:
-                if (!follower.isBusy() && pathState == 8) {
+            case 8://certo
+                subir(710);
+                follower.followPath(traj2, 1, true);
+                setPathState(9);
+                break;
+            case 9://certo
+                if (!follower.isBusy() && pathState == 9) {
                     extender(-3300);
                     servo(1);
                     pathTimer.resetTimer();
                     setPathState(103);
                 }
                 break;
-            case 9:
-                if (!follower.isBusy() && pathState == 9) {
+            case 10://certo
+                if (!follower.isBusy() && pathState == 10) {
                     open();
                     open();
                     servo(0);
-                    setPathState(10);
-                }
-                break;
-            case 10:
-                if (!follower.isBusy() && pathState == 10) {
-                    recuar(0);
                     setPathState(11);
                 }
                 break;
-            case 11:
+            case 11://certo
                 if (!follower.isBusy() && pathState == 11) {
+                    recuar(0);
                     descer(0);
-                    setPathState(-1);
+                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    setPathState(12);
                 }
                 break;
 
+                //TODO: terceiro
+            case 12:
+                follower.followPath(traj3, 0.7, true);
+                setPathState(13);
+                break;
+            case 13:
+                if(!follower.isBusy() && pathState == 13){
+                    extender(-2100);
+                    open();
+                    //pathTimer.resetTimer();
+                    setPathState(14);
+                }
+                break;
+            case 14:
+                if(!follower.isBusy() && pathState == 14){
+                    closed();
+                    closed();
+                    setPathState(15);
+                }
+                break;
+            case 15:
+                if (!follower.isBusy() && pathState == 15) {
+                    recuar(0);
+                    setPathState(16);
+                }
+                break;
+            case 16:
+                subir(700);
+                follower.followPath(traj4, 1, true);
+                setPathState(17);
+                break;
+            case 17:
+                if (!follower.isBusy() && pathState == 17) {
+                    extender(-3300);
+                    servo(1);
+                    pathTimer.resetTimer();
+                    setPathState(107);
+                }
+                break;
+            case 18:
+                if (!follower.isBusy() && pathState == 18) {
+                    open();
+                    open();
+                    servo(0);
+                    setPathState(19);
+                }
+                break;
+            case 19:
+                if (!follower.isBusy() && pathState == 11) {
+                    recuar(0);
+                    descer(0);
+                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    setPathState(12);
+                }
+                break;
             case 101:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(2);
-                    break;
+                }
+                break;
+            case 102:
+                if(pathTimer.getElapsedTimeSeconds() > 0.5){
+                    setPathState(6);
                 }
                 break;
             case 103:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
-                    setPathState(9);
+                    setPathState(10);
+                }
+                break;
+            case 104:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(14);
+                }
+                break;
+            case 107:
+                if(pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(18);
                 }
                 break;
         }
