@@ -69,50 +69,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
     public void start() {
         follower.startTeleopDrive();
     }
-    public void move_Slide(){
-
-        int giroMotor = 200;
-        int limitregra = -2300;
-
-        int posRight = armMotorR.getCurrentPosition();
-        int MAX_POSITION = -3225;
-
-        int maximoAtual = limitregra;
-        int currentPosition = slide.getCurrentPosition(); // Obtém a posição atual do motor
-        double joystickInput = gamepad2.left_stick_y; // Captura a entrant do joystick
-
-        if(posRight >= giroMotor){
-            //TODO: ÁREA SUPERIOR
-            maximoAtual = MAX_POSITION;
-        }else{
-            //TODO: ÁREA INFERIOR
-            maximoAtual = limitregra;
-        }
-        if (currentPosition < maximoAtual) {
-            slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            slide.setPower(1);
-        } else if (currentPosition <= 200) {
-            slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            if (currentPosition > maximoAtual + 100) {
-                slide.setPower(joystickInput);
-            } else {
-                if (joystickInput <= 0) {
-                    slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    slide.setTargetPosition(currentPosition);
-                    slide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    slide.setPower(0.25);
-                } else {
-                    slide.setPower(joystickInput);
-                }
-            }
-
-        }
-        telemetry.addData("JOYSTICK POS:", joystickInput);
-        telemetry.addData("SLIDE POS: ", slide.getCurrentPosition());
-
-
-    }
-
 
     @Override
     public void loop() {

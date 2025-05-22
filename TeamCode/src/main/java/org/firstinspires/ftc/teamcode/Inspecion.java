@@ -75,7 +75,7 @@ public class Inspecion extends OpMode {
         int limitregra = -2300;
 
         int posRight = armMotorR.getCurrentPosition();
-        int MAX_POSITION = -3225;
+        int MAX_POSITION = -3225; //-2125
 
         int maximoAtual = limitregra;
         int currentPosition = slide.getCurrentPosition(); // Obtém a posição atual do motor

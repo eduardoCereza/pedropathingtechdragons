@@ -169,7 +169,7 @@ public class autoAribaClip_CopiaNat extends OpMode {
     private final Pose Control1 = new Pose(6, 20, Math.toRadians(180.00));
     private final Pose move2 = new Pose(49, 33, Math.toRadians(180.00)); //vai para frente
     private final Pose move3 = new Pose(49, 15, Math.toRadians(180.00));
-    private final Pose move4 = new Pose(5.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
+    private final Pose move4 = new Pose(2.5, 15, Math.toRadians(180.00)); //empurra o sample para o jogador humano
     private final Pose controlclip1 = new Pose(10, 50, Math.toRadians(180.00));
     private final Pose move5 = new Pose(25,81, Math.toRadians(180.00));// vai para a direita na frente do segundo sample
     private final Pose move6 = new Pose(31, 81, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
