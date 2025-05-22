@@ -37,7 +37,7 @@ public class autoAribaClip extends OpMode {
 
     }
     public void specimenPickpos(){
-        servo.setPosition(0.45);
+        servo.setPosition(0.2);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
@@ -153,7 +153,7 @@ public class autoAribaClip extends OpMode {
     int holdArm;
     Pose pose;
     private DcMotorEx slide, Left, Right;
-    private Servo garra; //servo da garra/ponta
+    private Servo garra; //servo1 da garra/ponta
     private Servo servo;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código
@@ -170,9 +170,9 @@ public class autoAribaClip extends OpMode {
     private final Pose move6 = new Pose(4.5, 5, Math.toRadians(180.00)); //empurra o segundo sample para a área do jogador humano
     private final Pose control2 = new Pose(10, 70, Math.toRadians(180.00));
     private final Pose clip2 = new Pose(23, 75, Math.toRadians(180.00));
-    private final Pose moveX = new Pose(29, 75, Math.toRadians(180.00));
+    private final Pose moveX = new Pose(27.5, 75, Math.toRadians(180.00));
     private final Pose move7 = new Pose(14, 30, Math.toRadians(180.00));
-    private final Pose move8 = new Pose(8, 30, Math.toRadians(180.00));
+    private final Pose move8 = new Pose(3.5, 25, Math.toRadians(180.00));
     private final Pose clip3 = new Pose(22, 90, Math.toRadians(180.00));
     private PathChain traj1, traj2, traj3, traj4, traj5, traj6, traj7; //conjunto de trajetórias
 
@@ -226,6 +226,7 @@ public class autoAribaClip extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             //0.4
+            //clipa o primeiro
             case 0:
                 follower.followPath(traj1, 0.4, false);
                 closed();
@@ -250,6 +251,7 @@ public class autoAribaClip extends OpMode {
                     setPathState(105);
                 }
                 break;
+                //arrasta os dois
             case 2:
                 if (!follower.isBusy() && pathState ==2){
                     //0.6
@@ -257,6 +259,7 @@ public class autoAribaClip extends OpMode {
                     setPathState(3);//
                 }
                 break;
+                //pega o specimen
             case 3:
                 if(!follower.isBusy() && pathState == 3){
                     closed();
@@ -271,56 +274,40 @@ public class autoAribaClip extends OpMode {
                     //0.6
                     follower.followPath(traj4, 0.6, false);
                     clipPos();
-                    extender(-1150);
+                    slide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                    extender(-1050);
                     setPathState(5);
                 }
                 break;
+                //clipa
             case 5:
                 if (!follower.isBusy() && pathState == 5){
-                    extender(-2000);
+                    extender(-1700);
                     open();
                     num = 4;
-                }
-                if (num == 4){
-                    recuar(-10);
-                   //descer(-10);
-                    if(slide.getCurrentPosition() == -10){
-                        descer(-10);
-                    }
-                    specimenPickpos();
                     setPathState(6);
                 }
                 break;
             case 6:
-                //if(!follower.isBusy() && pathState == 6){
-                   // descer(-5);
-
-                //}
-                follower.followPath(traj5, 0.9, false);
-                setPathState(7);
-
+                if(!follower.isBusy() && num == 4 && pathState == 6){
+                    recuar(-100);
+                    descer(-10);
+                    specimenPickpos();
+                    setPathState(7);
+                }
                 break;
             case 7:
-                if (!follower.isBusy() && pathState == 7){
-                    closed();
-                    setPathState(102);
-                }
+                follower.followPath(traj5, 0.5, false);
+                setPathState(8);
                 break;
             case 8:
-                subir(-650);
-                //0.9
-                follower.followPath(traj6, 0.9, false);
-                clipPos();
-                extender(-1150);
-                setPathState(9);
+                if(!follower.isBusy() && pathState == 8){
+                    closed();
+                pathTimer.resetTimer();
+                setPathState(104);}
                 break;
             case 9:
-                if(!follower.isBusy() && pathState == 9){
-                    extender(-1900);
-                    open();
-                    recuar(-100);
-                    descer(0);
-                }
+                subir(-650);
                 break;
 
             //estaciona
@@ -337,8 +324,12 @@ public class autoAribaClip extends OpMode {
                 if(pathTimer.getElapsedTimeSeconds() > 0.5){
                     setPathState(6);
                 }
+            case 104:
+                if(pathTimer.getElapsedTimeSeconds() > 0.5){
+                    setPathState(9);
+                }
             case 105:
-                if(pathTimer.getElapsedTimeSeconds() > 3){
+                if(pathTimer.getElapsedTimeSeconds() > 0.5){
                     setPathState(2);
                 }
 
@@ -384,7 +375,7 @@ public class autoAribaClip extends OpMode {
             servo.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            servo.setPosition(0.45);
+            servo.setPosition(0.6);
         }
 
         follower.update();

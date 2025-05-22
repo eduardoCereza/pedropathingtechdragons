@@ -121,7 +121,7 @@ public class Estrategia_2 extends OpMode {
     int isopen;
     int  specimenpickpos, clippos, pickpos;
     private DcMotorEx slide, Left, Right;
-    private Servo garra; //servo da garra/ponta
+    private Servo garra; //servo1 da garra/ponta
     private Servo leftS, rightS;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código

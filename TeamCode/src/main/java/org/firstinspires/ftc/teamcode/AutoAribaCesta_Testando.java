@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
 public class AutoAribaCesta_Testando extends OpMode {
 
     public void clipPos(){
-        servo.setPosition(0.95);
+        servo.setPosition(1.0);
         clippos = 1;
         pickpos = 0;
         specimenpickpos = 0;
@@ -57,31 +57,31 @@ public class AutoAribaCesta_Testando extends OpMode {
     }
     public void subir(int target){
 
-        while (Right.getCurrentPosition() <= target){
+        while (Left.getCurrentPosition() <= target){
 
-            Right.setTargetPosition(target);
+            Left.setTargetPosition(target);
 
-            Right.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            Left.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-            Left.setPower(0.5);
-            Right.setPower(0.5);
+            Left.setPower(1);
+            Right.setPower(1);
             holdArm = 0;
         }
 
         Left.setPower(0);
         Right.setPower(0);
-        //holdArm =1;
+        //holdArm = 1;
     }
     public void descer(int target){
 
-        while (Left.getCurrentPosition() <= target){
+        while (Left.getCurrentPosition() >= target){
 
-            Left.setTargetPosition(-target);
-            Right.setTargetPosition(target);
+            Left.setTargetPosition(target);
+            Right.setTargetPosition(-target);
 
             Left.setPower(-0.4);
             Right.setPower(-0.4);
-            //holdArm = 0;
+            holdArm = 0;
         }
         Left.setPower(0.0);
         Right.setPower(0.0);
@@ -148,7 +148,7 @@ public class AutoAribaCesta_Testando extends OpMode {
     int holdSlide;
     int holdArm;
     private DcMotorEx slide, Left, Right;
-    private Servo garra; //servo da garra/ponta
+    private Servo garra; //servo1 da garra/ponta
     private Servo servo;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código
@@ -157,12 +157,12 @@ public class AutoAribaCesta_Testando extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(16, 153, Math.toRadians(0));
-    private final Pose move01 = new Pose(18, 157, Math.toRadians(0));
-    private final Pose move02 = new Pose(19, 163, Math.toRadians(0));
+    private final Pose move0 = new Pose(14.5, 153, Math.toRadians(0));
+    private final Pose move01 = new Pose(16, 160, Math.toRadians(0));
+    private final Pose move02 = new Pose(17, 169, Math.toRadians(0));
 
-    private final Pose move1 = new Pose(15, 147, Math.toRadians(0));
-    private final Pose move2 = new Pose(15, 140, Math.toRadians(0));
+    private final Pose move1 = new Pose(13, 150, Math.toRadians(0));
+    private final Pose move2 = new Pose(11, 145, Math.toRadians(0));
 
 
     private PathChain traj0, traj1, traj2, traj3, traj4; //conjunto de trajetórias
@@ -195,7 +195,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
         traj4 = follower.pathBuilder()//vai para o segundo specimen amarelo
-                .addPath(new BezierLine(new Point(move2), new Point(move01)))
+                .addPath(new BezierLine(new Point(move2), new Point(move02)))
                 .setConstantHeadingInterpolation(Math.toRadians(0))
                 .build();
 
@@ -209,12 +209,12 @@ public class AutoAribaCesta_Testando extends OpMode {
             //TODO: primeiro
             case 0: //certo
                 servo(0);
-                follower.followPath(traj0, 1, true);
+                follower.followPath(traj0, 1, false);
                 setPathState(1);
                 break;
             case 1: //certo
                 if (!follower.isBusy() && pathState == 1) {
-                    subir(670);
+                    subir(720);
                     extender(-3100);
                     servo(1);
                     pathTimer.resetTimer();
@@ -232,22 +232,22 @@ public class AutoAribaCesta_Testando extends OpMode {
 
             case 3: //certo
                 if (!follower.isBusy() && pathState == 3) {
-                    recuar(0);
+                    recuar(-10);
                     descer(0);
-                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     setPathState(4);
                 }
                 break;
 
                 //TODO: segundo
             case 4: //certo
-                follower.followPath(traj1, 0.3, true);
+                follower.followPath(traj1, 0.35, false);
                 setPathState(5);
                 break;
             case 5://certo
                 if(!follower.isBusy() && pathState == 5){
-                extender(-2000);
+                extender(-1850);
                 open();
                 //pathTimer.resetTimer();
                 setPathState(6);
@@ -262,13 +262,13 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy() && pathState == 7) {
-                    recuar(0);
+                    recuar(-10);
                     setPathState(8);
                 }
                 break;
             case 8://certo
-                subir(710);
-                follower.followPath(traj2, 1, true);
+                subir(720);
+                follower.followPath(traj2, 1, false);
                 setPathState(9);
                 break;
             case 9://certo
@@ -289,22 +289,21 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 11://certo
                 if (!follower.isBusy() && pathState == 11) {
-                    recuar(0);
+                    recuar(-30);
+                    slide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     descer(0);
-                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     setPathState(12);
                 }
                 break;
 
                 //TODO: terceiro
             case 12:
-                follower.followPath(traj3, 0.7, true);
+                follower.followPath(traj3, 0.7, false);
                 setPathState(13);
                 break;
             case 13:
                 if(!follower.isBusy() && pathState == 13){
-                    extender(-2100);
+                    extender(-2330);
                     open();
                     //pathTimer.resetTimer();
                     setPathState(14);
@@ -319,13 +318,13 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 15:
                 if (!follower.isBusy() && pathState == 15) {
-                    recuar(0);
+                    recuar(-10);
+                    subir(730);
                     setPathState(16);
                 }
                 break;
             case 16:
-                subir(700);
-                follower.followPath(traj4, 1, true);
+                follower.followPath(traj4, 1, false);
                 setPathState(17);
                 break;
             case 17:
@@ -345,13 +344,6 @@ public class AutoAribaCesta_Testando extends OpMode {
                 }
                 break;
             case 19:
-                if (!follower.isBusy() && pathState == 11) {
-                    recuar(0);
-                    descer(0);
-                    Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    setPathState(12);
-                }
                 break;
             case 101:
                 if(pathTimer.getElapsedTimeSeconds() > 1){
@@ -426,6 +418,15 @@ public class AutoAribaCesta_Testando extends OpMode {
         follower.update();
         autonomousPathUpdate();
 
+        telemetry.addData("RIGHT POS: ", Right.getCurrentPosition());
+        telemetry.addData("LEFT POS: ", Left.getCurrentPosition());
+        telemetry.addData("RIGHT MODE: ", Right.getDirection());
+        telemetry.addData("LEFT MODE: ", Left.getDirection());
+        telemetry.update();
+
+
+
+
     }
 
     //se precisar fazer alguma ação no init tem que por aq
@@ -444,6 +445,7 @@ public class AutoAribaCesta_Testando extends OpMode {
         specimenpickpos = 0;
 
          */
+        holdArm = 1;
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         servo = hardwareMap.get(Servo.class, "servo1");
         garra = hardwareMap.get(Servo.class, "garra");
@@ -452,7 +454,7 @@ public class AutoAribaCesta_Testando extends OpMode {
 
         servo.setDirection(Servo.Direction.REVERSE);
 
-        Left.setDirection(DcMotorEx.Direction.REVERSE);
+        //Right.setDirection(DcMotorEx.Direction.REVERSE);
         pathTimer = new Timer();
         opmodeTimer = new Timer();
         opmodeTimer.resetTimer();

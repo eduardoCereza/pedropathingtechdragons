@@ -155,7 +155,7 @@ public class AutoAribaCesta extends OpMode {
     int holdSlide;
     int holdArm;
     private DcMotorEx slide, Left, Right;
-    private Servo garra; //servo da garra/ponta
+    private Servo garra; //servo1 da garra/ponta
     private Servo servo;
     private Follower follower; //sla tbm
     private Timer pathTimer, opmodeTimer; //sla ja veio no código

@@ -198,7 +198,7 @@ public class TeleOp_teste extends OpMode {
 
 
 
-    //Todo: Mover servo
+    //Todo: Mover servo1
     public void moveServo(){
 
         if(gamepad2.a){

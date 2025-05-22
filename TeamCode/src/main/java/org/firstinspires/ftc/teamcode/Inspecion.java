@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.constants.LConstants;
  */
 
 @Config
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOperado Mundial Oficial")
-public class TeleOp_Mundial_Oficial extends OpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Inspecion")
+public class Inspecion extends OpMode {
     private Follower follower;
     private FollowerConstants followerConstants;
     DcMotorEx slide, armMotorL, armMotorR;
@@ -112,7 +112,6 @@ public class TeleOp_Mundial_Oficial extends OpMode {
 
 
     }
-
 
     @Override
     public void loop() {

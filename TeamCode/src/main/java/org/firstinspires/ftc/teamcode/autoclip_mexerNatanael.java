@@ -14,18 +14,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.constants.FConstants;
 import org.firstinspires.ftc.teamcode.constants.LConstants;
 
 
-@Autonomous(name = "Clip México 3 - corrigindo")
-public class autoAribaClip_CopiaNat extends OpMode {
+@Autonomous(name = "Clip México 3 - dando errado")
+public class autoclip_mexerNatanael extends OpMode {
+
 
     public void servo(double target){
         servo.setPosition(target);
-
     }
     public void clipPos(){
         servo.setPosition(1.0);
@@ -41,7 +42,7 @@ public class autoAribaClip_CopiaNat extends OpMode {
 
     }
     public void specimenPickpos(){
-        servo.setPosition(0.35);
+        servo.setPosition(0.65);
         clippos = 0;
         pickpos= 0;
         specimenpickpos = 1;
@@ -252,19 +253,25 @@ public class autoAribaClip_CopiaNat extends OpMode {
 
                     recuar(-250);
                     descer(-10);
-                    specimenPickpos();
+                    //clipPos();
                     Left.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
                     slide.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
                     //0.75
-                    follower.followPath(traj2, 0.75, false);
+                    servo(0.5);
                     pathTimer.resetTimer();
                     setPathState(105);
                 }
                 break;
             case 2:
-                if(!follower.isBusy() && pathState == 2){
+                follower.followPath(traj2, 0.75, false);
+                setPathState(140);
+                break;
+            case 140:
+                //specimenPickpos();
+                //servo1(0.5);
+
+                if(!follower.isBusy() && pathState == 140){
                     closed();
-                    pathTimer.resetTimer();
                     setPathState(101);
                 }
                 break;
@@ -297,9 +304,9 @@ public class autoAribaClip_CopiaNat extends OpMode {
                 break;
             case 7:
                 if(!follower.isBusy() && pathState == 7){
-                closed();
-                pathTimer.resetTimer();
-                setPathState(102);
+                    closed();
+                    pathTimer.resetTimer();
+                    setPathState(102);
                 }
                 break;
             case 8:
@@ -340,10 +347,12 @@ public class autoAribaClip_CopiaNat extends OpMode {
                     setPathState(9);
                 }
             case 105:
-                if(pathTimer.getElapsedTimeSeconds() > 0.5){
+                if(pathTimer.getElapsedTimeSeconds() > 1){
                     setPathState(2);
                 }
-
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + pathState);
         }
     }
 
@@ -381,15 +390,18 @@ public class autoAribaClip_CopiaNat extends OpMode {
         if (isopen == 0){
             garra.setPosition(0);
         }
+        /*
         if (clippos == 1){
-            servo.setPosition(1.0);
+            servo1.setPosition(1.0);
         }
         if (pickpos == 1){
-            servo.setPosition(0.0);
+            servo1.setPosition(0.0);
         }
         if (specimenpickpos == 1){
-            servo.setPosition(0.35);
+            servo1.setPosition(0.65);
         }
+
+         */
 
         follower.update();
         autonomousPathUpdate();
@@ -399,12 +411,14 @@ public class autoAribaClip_CopiaNat extends OpMode {
     //se precisar fazer alguma ação no init tem que por aq
     @Override
     public void init() {
-
+/*
         holdSlide = 0;
 
         holdArm = 1;
 
         isopen = 0;
+
+ */
 
         slide = hardwareMap.get(DcMotorEx.class, "gobilda");
         servo = hardwareMap.get(Servo.class, "servo1");
@@ -427,7 +441,7 @@ public class autoAribaClip_CopiaNat extends OpMode {
 
         garra.setPosition(0);
 
-        servo.setPosition(1.0);
+        //servo1.setPosition(1.0);
 
         Constants.setConstants(FConstants.class, LConstants.class);
         follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
