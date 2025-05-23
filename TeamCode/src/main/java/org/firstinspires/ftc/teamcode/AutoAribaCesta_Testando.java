@@ -70,7 +70,7 @@ public class AutoAribaCesta_Testando extends OpMode {
 
         Left.setPower(0);
         Right.setPower(0);
-        //holdArm = 1;
+        holdArm = 1;
     }
     public void descer(int target){
 
@@ -85,7 +85,7 @@ public class AutoAribaCesta_Testando extends OpMode {
         }
         Left.setPower(0.0);
         Right.setPower(0.0);
-        //holdArm = 1;
+        holdArm = 1;
     }
 
     public void hold(){
@@ -141,6 +141,33 @@ public class AutoAribaCesta_Testando extends OpMode {
         slide.setPower(0.5); // Aplica uma pequena potência para segurar a posição
     }
 
+    public void armPID(int target){
+        PIDFController controller;
+
+        double minPower = 0.1;
+        double maxPower = 5.0;
+        controller = new PIDFController(12, 4, 5, 13);
+        controller.setInputRange(-4000, 4000);
+        controller.setSetPoint(target);
+        controller.setOutputRange(minPower, maxPower);
+
+        double powerM = minPower + controller.getComputedOutput(Left.getCurrentPosition());
+        double powerM1 = minPower + controller.getComputedOutput(Right.getCurrentPosition());
+
+        double powerS = minPower - controller.getComputedOutput(Left.getCurrentPosition());
+        double powerS1 = minPower - controller.getComputedOutput(Right.getCurrentPosition());
+
+        if(Left.getCurrentPosition() < target){
+            Left.setPower(powerM);
+            Right.setPower(powerM1);
+        } else {
+            Left.setPower(powerS);
+            Right.setPower(powerS1);
+        }
+
+
+    }
+
     Pose pose;
     int isopen;
     int num;
@@ -158,11 +185,11 @@ public class AutoAribaCesta_Testando extends OpMode {
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
     private final Pose move0 = new Pose(14.5, 153, Math.toRadians(0));
-    private final Pose move01 = new Pose(16, 156, Math.toRadians(0));
+    private final Pose move01 = new Pose(16, 155, Math.toRadians(0));
     private final Pose move02 = new Pose(17, 160, Math.toRadians(0));
 
     private final Pose move1 = new Pose(13, 150, Math.toRadians(0));
-    private final Pose move2 = new Pose(11, 145, Math.toRadians(0));
+    private final Pose move2 = new Pose(15, 142, Math.toRadians(0));
 
 
     private PathChain traj0, traj1, traj2, traj3, traj4; //conjunto de trajetórias
@@ -214,8 +241,12 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 1: //certo
                 if (!follower.isBusy() && pathState == 1) {
-                    subir(720);
+                    subir(760);
+                    //armPID(750);
+                    //subir(750);
                     extender(-3100);
+                    //subir(750);
+                    //extender(-3100);
                     servo(1);
                     pathTimer.resetTimer();
                     setPathState(101);
@@ -247,7 +278,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 5://certo
                 if(!follower.isBusy() && pathState == 5){
-                extender(-1850);
+                extender(-1900);
                 open();
                 //pathTimer.resetTimer();
                 setPathState(6);
@@ -303,7 +334,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 13:
                 if(!follower.isBusy() && pathState == 13){
-                    extender(-2330);
+                    extender(-2200);
                     open();
                     //pathTimer.resetTimer();
                     setPathState(14);
@@ -481,6 +512,10 @@ public class AutoAribaCesta_Testando extends OpMode {
     //quando começar ele define a variável de controle como 0 e ja começa as ações
     @Override
     public void start() {
+        Constants.setConstants(FConstants.class, LConstants.class);
+        follower =  new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower.setStartingPose(startPose);
+        buildPaths();
         opmodeTimer.resetTimer();
         setPathState(0);
     }
