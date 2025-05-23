@@ -241,6 +241,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 1: //certo
                 if (!follower.isBusy() && pathState == 1) {
+                    //O braço sobre, mas logo em seguida ele cai
                     subir(760);
                     //armPID(750);
                     //subir(750);
@@ -278,10 +279,11 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 5://certo
                 if(!follower.isBusy() && pathState == 5){
-                extender(-1900);
-                open();
-                //pathTimer.resetTimer();
-                setPathState(6);
+                    //editar para ver se ele pega o terceiro specimen
+                    extender(-1900);
+                    open();
+                    //pathTimer.resetTimer();
+                    setPathState(6);
             }
                 break;
             case 6://certo
