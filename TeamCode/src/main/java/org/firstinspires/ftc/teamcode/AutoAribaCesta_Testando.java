@@ -94,7 +94,7 @@ public class AutoAribaCesta_Testando extends OpMode {
 
         double minPower = 0.7;
         double maxPower = 1.0;
-        controller = new PIDFController(12, 4, 5, 13);
+        controller = new PIDFController(13, 5, 6, 14);
         controller.setInputRange(-4000, 4000);
         controller.setOutputRange(minPower, maxPower);
 
@@ -184,11 +184,11 @@ public class AutoAribaCesta_Testando extends OpMode {
     // x = frente e tras (se for maior vai para frente)
     private final Pose startPose = new Pose(0, 80, Math.toRadians(0));//posição inicial do robô
 
-    private final Pose move0 = new Pose(14.5, 153, Math.toRadians(0));
-    private final Pose move01 = new Pose(16, 155, Math.toRadians(0));
-    private final Pose move02 = new Pose(17, 160, Math.toRadians(0));
+    private final Pose move0 = new Pose(8, 160, Math.toRadians(0));
+    private final Pose move01 = new Pose(16, 160, Math.toRadians(0));
+    private final Pose move02 = new Pose(17, 153, Math.toRadians(0));
 
-    private final Pose move1 = new Pose(13, 150, Math.toRadians(0));
+    private final Pose move1 = new Pose(13, 155, Math.toRadians(0));
     private final Pose move2 = new Pose(15, 142, Math.toRadians(0));
 
 
@@ -232,7 +232,6 @@ public class AutoAribaCesta_Testando extends OpMode {
     public void autonomousPathUpdate(){
         switch (pathState) {
             //faz a trajetória
-
             //TODO: primeiro
             case 0: //certo
                 servo(0);
@@ -242,12 +241,8 @@ public class AutoAribaCesta_Testando extends OpMode {
             case 1: //certo
                 if (!follower.isBusy() && pathState == 1) {
                     //O braço sobre, mas logo em seguida ele cai
-                    subir(760);
-                    //armPID(750);
-                    //subir(750);
-                    extender(-3100);
-                    //subir(750);
-                    //extender(-3100);
+                    subir(720);
+                    extender(-3300);
                     servo(1);
                     pathTimer.resetTimer();
                     setPathState(101);
@@ -264,8 +259,8 @@ public class AutoAribaCesta_Testando extends OpMode {
 
             case 3: //certo
                 if (!follower.isBusy() && pathState == 3) {
-                    recuar(-10);
-                    descer(0);
+                    recuar(-60);
+                    descer(10);
                     Right.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     Left.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     setPathState(4);
@@ -279,8 +274,8 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 5://certo
                 if(!follower.isBusy() && pathState == 5){
-                    //editar para ver se ele pega o terceiro specimen
-                    extender(-1900);
+                    //acertar
+                    extender(-800);
                     open();
                     //pathTimer.resetTimer();
                     setPathState(6);
@@ -295,7 +290,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 7:
                 if (!follower.isBusy() && pathState == 7) {
-                    recuar(-10);
+                    recuar(-60);
                     setPathState(8);
                 }
                 break;
@@ -336,6 +331,7 @@ public class AutoAribaCesta_Testando extends OpMode {
                 break;
             case 13:
                 if(!follower.isBusy() && pathState == 13){
+                    //acertar
                     extender(-2200);
                     open();
                     //pathTimer.resetTimer();
@@ -403,6 +399,10 @@ public class AutoAribaCesta_Testando extends OpMode {
                     setPathState(18);
                 }
                 break;
+            case 202:
+                if (pathTimer.getElapsedTimeSeconds() > 1){
+                    setPathState(15);
+                }
         }
     }
     //controle das trajetórias

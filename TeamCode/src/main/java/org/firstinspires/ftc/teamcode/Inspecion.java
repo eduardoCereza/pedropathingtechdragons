@@ -72,7 +72,7 @@ public class Inspecion extends OpMode {
     public void move_Slide(){
 
         int giroMotor = 200;
-        int limitregra = -2300;
+        int limitregra = -2000;
 
         int posRight = armMotorR.getCurrentPosition();
         int MAX_POSITION = -3225; //-2125
@@ -134,7 +134,8 @@ public class Inspecion extends OpMode {
         }
 
         moveServo();
-        moveSlide();
+        //moveSlide();
+        move_Slide();
         armBase();
 
         telemetry.addData("Pos Left: ", armMotorL.getCurrentPosition());
@@ -145,17 +146,17 @@ public class Inspecion extends OpMode {
     public void moveSlide() {
 
         int current = slide.getCurrentPosition();
-        //int limit = /*-2990*/;
+        int limit = -2125;
         double joystickInput = gamepad2.left_stick_y; // Captura a entrada do joystick
 
         // Se o joystick for movido para cima e a posição for menor que 0, move o motor
-        if (joystickInput > 0 /*&& current < 0*/) {
+        if (joystickInput > 0 && current < 0) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
         }
         // Se o joystick for movido para baixo e ainda não atingiu o limite, move o motor
-        else if (joystickInput < 0 /*&& current > limit*/) {
+        else if (joystickInput < 0 && current > limit) {
             slide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             slide.setPower(joystickInput);
             holdingPosition = false; // O motor está se movendo, então não está segurando posição
